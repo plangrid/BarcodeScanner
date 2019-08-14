@@ -32,7 +32,7 @@ public protocol BarcodeScannerDismissalDelegate: class {
  - Not found error message
  */
 open class BarcodeScannerViewController: UIViewController {
-  private static let footerHeight: CGFloat = 75
+  private static let footerHeight: CGFloat = 91
 
   // MARK: - Public properties
 
@@ -42,10 +42,6 @@ open class BarcodeScannerViewController: UIViewController {
   public weak var errorDelegate: BarcodeScannerErrorDelegate?
   /// Delegate to dismiss barcode scanner when the close button has been pressed.
   public weak var dismissalDelegate: BarcodeScannerDismissalDelegate?
-
-  /// When the flag is set to `true` controller returns a captured code
-  /// and waits for the next reset action.
-  public var isOneTimeSearch = true
 
   /// `AVCaptureMetadataOutput` metadata object types.
   public var metadata = AVMetadataObject.ObjectType.barcodeScannerMetadata {
@@ -65,20 +61,16 @@ open class BarcodeScannerViewController: UIViewController {
 
   // MARK: - UI
 
-  // Title label and close button.
-  public private(set) lazy var headerViewController: HeaderViewController = .init()
   /// Information view with description label.
-  public private(set) lazy var messageViewController: MessageViewController = .init()
+  public private(set) lazy var footerVC: FooterViewController = .init()
   /// Camera view with custom buttons.
   public private(set) lazy var cameraViewController: CameraViewController = .init()
 
   // Constraints that are activated when the view is used as a footer.
   private lazy var collapsedConstraints: [NSLayoutConstraint] = self.makeCollapsedConstraints()
-  // Constraints that are activated when the view is used for loading animation and error messages.
-  private lazy var expandedConstraints: [NSLayoutConstraint] = self.makeExpandedConstraints()
 
-  private var messageView: UIView {
-    return messageViewController.view
+  private var footerView: UIView {
+    return footerVC.view
   }
 
   /// The current controller's status mode.
@@ -94,15 +86,15 @@ open class BarcodeScannerViewController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = UIColor.black
 
-    add(childViewController: messageViewController)
-    messageView.translatesAutoresizingMaskIntoConstraints = false
+    add(childViewController: footerVC)
+    footerView.translatesAutoresizingMaskIntoConstraints = false
     collapsedConstraints.activate()
 
     cameraViewController.metadata = metadata
     cameraViewController.delegate = self
     add(childViewController: cameraViewController)
 
-    view.bringSubviewToFront(messageView)
+    view.bringSubviewToFront(footerView)
   }
 
   open override func viewWillAppear(_ animated: Bool) {
@@ -136,8 +128,7 @@ open class BarcodeScannerViewController: UIViewController {
 
   private func changeStatus(from oldValue: Status, to newValue: Status) {
     guard newValue.state != .notFound else {
-      messageViewController.status = newValue
-      DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2.0) {
+    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2.0) {
         self.status = Status(state: .scanning)
       }
       return
@@ -152,37 +143,11 @@ open class BarcodeScannerViewController: UIViewController {
     if !delayReset {
       resetState()
     }
-
-    if newValue.state != .processing {
-      expandedConstraints.deactivate()
-      collapsedConstraints.activate()
-    } else {
-      collapsedConstraints.deactivate()
-      expandedConstraints.activate()
-    }
-
-    messageViewController.status = newValue
-
-    UIView.animate(
-      withDuration: duration,
-      animations: ({
-        self.view.layoutIfNeeded()
-      }),
-      completion: ({ [weak self] _ in
-        if delayReset {
-          self?.resetState()
-        }
-
-        self?.messageView.layer.removeAllAnimations()
-        if self?.status.state == .processing {
-          self?.messageViewController.animateLoading()
-        }
-      }))
   }
 
   /// Resets the current state.
   private func resetState() {
-    locked = status.state == .processing && isOneTimeSearch
+    locked = status.state == .processing
     if status.state == .scanning {
       cameraViewController.startCapturing()
     } else {
@@ -196,7 +161,7 @@ open class BarcodeScannerViewController: UIViewController {
    Simulates flash animation.
    - Parameter processing: Flag to set the current state to `.processing`.
    */
-  private func animateFlash(whenProcessing: Bool = false) {
+  private func animateFlash() {
     let flashView = UIView(frame: view.bounds)
     flashView.backgroundColor = UIColor.white
     flashView.alpha = 1
@@ -211,10 +176,6 @@ open class BarcodeScannerViewController: UIViewController {
       }),
       completion: ({ [weak self] _ in
         flashView.removeFromSuperview()
-
-        if whenProcessing {
-          self?.status = Status(state: .processing)
-        }
       }))
   }
 }
@@ -238,51 +199,18 @@ private extension BarcodeScannerViewController {
         constant: -BarcodeScannerViewController.footerHeight
       )
     )
-
-    if navigationController != nil {
       cameraView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-    } else {
-      headerViewController.delegate = self
-      add(childViewController: headerViewController)
-
-      let headerView = headerViewController.view!
-
-      NSLayoutConstraint.activate(
-        headerView.topAnchor.constraint(equalTo: view.topAnchor),
-        headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-        headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        headerView.bottomAnchor.constraint(equalTo: headerViewController.navigationBar.bottomAnchor),
-        cameraView.topAnchor.constraint(equalTo: headerView.bottomAnchor)
-      )
-    }
-  }
-
-  private func makeExpandedConstraints() -> [NSLayoutConstraint] {
-    return [
-      messageView.topAnchor.constraint(equalTo: view.topAnchor),
-      messageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      messageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-      messageView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-    ]
   }
 
   private func makeCollapsedConstraints() -> [NSLayoutConstraint] {
     return [
-      messageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-      messageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-      messageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-      messageView.heightAnchor.constraint(
+      footerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+      footerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      footerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      footerView.heightAnchor.constraint(
         equalToConstant: BarcodeScannerViewController.footerHeight
       )
     ]
-  }
-}
-
-// MARK: - HeaderViewControllerDelegate
-
-extension BarcodeScannerViewController: HeaderViewControllerDelegate {
-  func headerViewControllerDidTapCloseButton(_ controller: HeaderViewController) {
-    dismissalDelegate?.scannerDidDismiss(self)
   }
 }
 
@@ -320,10 +248,6 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
       metadata.contains(metadataObj.type)
       else { return }
 
-    if isOneTimeSearch {
-      locked = true
-    }
-
     var rawType = metadataObj.type.rawValue
 
     // UPC-A is an EAN-13 barcode with a zero prefix.
@@ -334,6 +258,6 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
     }
 
     codeDelegate?.scanner(self, didCaptureCode: code, type: rawType)
-    animateFlash(whenProcessing: isOneTimeSearch)
+    animateFlash()
   }
 }
