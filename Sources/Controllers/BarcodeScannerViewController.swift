@@ -174,7 +174,7 @@ open class BarcodeScannerViewController: UIViewController {
       animations: ({
         flashView.alpha = 0.0
       }),
-      completion: ({ [weak self] _ in
+      completion: ({ _ in
         flashView.removeFromSuperview()
       }))
   }
