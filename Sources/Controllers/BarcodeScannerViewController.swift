@@ -33,6 +33,7 @@ public protocol BarcodeScannerDismissalDelegate: class {
  */
 open class BarcodeScannerViewController: UIViewController {
   private static let footerHeight: CGFloat = 91
+  private static let headerHeight: CGFloat = 173
 
   // MARK: - Public properties
 
@@ -61,10 +62,9 @@ open class BarcodeScannerViewController: UIViewController {
 
   // MARK: - UI
 
-  /// Information view with description label.
   public private(set) lazy var footerVC: FooterViewController = .init()
-  /// Camera view with custom buttons.
   public private(set) lazy var cameraViewController: CameraViewController = .init()
+  public private(set) lazy var cameraHeaderVC: CameraHeaderViewController = .init()
 
   // Constraints that are activated when the view is used as a footer.
   private lazy var collapsedConstraints: [NSLayoutConstraint] = self.makeCollapsedConstraints()
@@ -73,6 +73,9 @@ open class BarcodeScannerViewController: UIViewController {
     return footerVC.view
   }
 
+    private var headerView: UIView {
+        return cameraHeaderVC.view
+    }
   /// The current controller's status mode.
   private var status: Status = Status(state: .scanning) {
     didSet {
@@ -87,14 +90,20 @@ open class BarcodeScannerViewController: UIViewController {
     view.backgroundColor = UIColor.black
 
     add(childViewController: footerVC)
+    add(childViewController: cameraHeaderVC)
+
     footerView.translatesAutoresizingMaskIntoConstraints = false
+    headerView.translatesAutoresizingMaskIntoConstraints = false
+
     collapsedConstraints.activate()
 
     cameraViewController.metadata = metadata
     cameraViewController.delegate = self
     add(childViewController: cameraViewController)
-
+    
     view.bringSubviewToFront(footerView)
+    view.bringSubviewToFront(headerView)
+
   }
 
   open override func viewWillAppear(_ animated: Bool) {
@@ -134,10 +143,6 @@ open class BarcodeScannerViewController: UIViewController {
       return
     }
 
-    let animatedTransition = newValue.state == .processing
-      || oldValue.state == .processing
-      || oldValue.state == .notFound
-    let duration = newValue.animated && animatedTransition ? 0.5 : 0.0
     let delayReset = oldValue.state == .processing || oldValue.state == .notFound
 
     if !delayReset {
@@ -194,12 +199,9 @@ private extension BarcodeScannerViewController {
     NSLayoutConstraint.activate(
       cameraView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       cameraView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-      cameraView.bottomAnchor.constraint(
-        equalTo: view.bottomAnchor,
-        constant: -BarcodeScannerViewController.footerHeight
-      )
+      cameraView.bottomAnchor.constraint(equalTo: footerView.bottomAnchor),
+      cameraView.topAnchor.constraint(equalTo: headerView.topAnchor)
     )
-      cameraView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
   }
 
   private func makeCollapsedConstraints() -> [NSLayoutConstraint] {
@@ -209,7 +211,14 @@ private extension BarcodeScannerViewController {
       footerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       footerView.heightAnchor.constraint(
         equalToConstant: BarcodeScannerViewController.footerHeight
-      )
+      ),
+      
+        headerView.topAnchor.constraint(equalTo: view.topAnchor),
+        headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+        headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        headerView.heightAnchor.constraint(
+            equalToConstant: BarcodeScannerViewController.headerHeight
+        )
     ]
   }
 }

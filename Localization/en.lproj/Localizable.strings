@@ -1,5 +1,8 @@
+"SCAN_TITLE" = "You can scan:";
 "SCAN_BARCODE_TITLE" = "Scan barcode";
-"BUTTON_CLOSE" = "Close";
+"SCAN_BARCODE_SUBTITLE" = "Barcodes";
+"SCAN_QRCODE_SUBTITLE" = "QR Codes";
+"BUTTON_CLOSE" = "Cancel";
 "BUTTON_SETTINGS" = "Settings";
 "INFO_DESCRIPTION_TEXT" = "Place the barcode within the window to scan. The search will start automatically.";
 "INFO_LOADING_TITLE" = "Looking for your product...";

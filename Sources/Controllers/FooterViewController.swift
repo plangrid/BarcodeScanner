@@ -16,7 +16,7 @@ private extension FooterViewController {
     func makeCancelButton() -> UIButton {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Cancel", for: .normal)
+        button.setTitle(localizedString("BUTTON_CLOSE"), for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont(name: "ArtifaktElement-Regular", size: 18)
         button.addTarget(self, action: #selector(cancel), for: .touchUpInside)

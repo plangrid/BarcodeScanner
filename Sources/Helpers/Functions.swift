@@ -6,7 +6,7 @@ import AVFoundation
  - Parameter name: Image name.
  - Returns: An image.
  */
-func imageNamed(_ name: String) -> UIImage {
+func  imageNamed(_ name: String) -> UIImage {
   let cls = BarcodeScannerViewController.self
   var bundle = Bundle(for: cls)
   let traitCollection = UITraitCollection(displayScale: 3)
