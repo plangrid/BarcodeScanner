@@ -250,12 +250,16 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
                             didOutput metadataObjects: [AVMetadataObject]) {
     guard !locked && isVisible else { return }
     guard !metadataObjects.isEmpty else { return }
-
+    controller.stopCapturing()
+    
     guard
       let metadataObj = metadataObjects[0] as? AVMetadataMachineReadableCodeObject,
       var code = metadataObj.stringValue,
       metadata.contains(metadataObj.type)
-      else { return }
+      else {
+        errorDelegate?.scanner(self, didReceiveError: AVError.unknown as! Error)
+        return
+    }
 
     var rawType = metadataObj.type.rawValue
 
