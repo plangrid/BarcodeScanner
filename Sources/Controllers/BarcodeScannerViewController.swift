@@ -34,6 +34,7 @@ public protocol BarcodeScannerDismissalDelegate: class {
 open class BarcodeScannerViewController: UIViewController {
   private static let footerHeight: CGFloat = 91
   private static let headerHeight: CGFloat = 173
+  private static let headerRightPadding: CGFloat = -50
 
   // MARK: - Public properties
 
@@ -215,7 +216,7 @@ private extension BarcodeScannerViewController {
       
         headerView.topAnchor.constraint(equalTo: view.topAnchor),
         headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-        headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: BarcodeScannerViewController.headerRightPadding),
         headerView.heightAnchor.constraint(
             equalToConstant: BarcodeScannerViewController.headerHeight
         )
@@ -257,7 +258,7 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
       var code = metadataObj.stringValue,
       metadata.contains(metadataObj.type)
       else {
-        errorDelegate?.scanner(self, didReceiveError: AVError.unknown as! Error)
+        errorDelegate?.scanner(self, didReceiveError: NSError())
         return
     }
 
