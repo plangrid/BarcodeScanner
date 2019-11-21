@@ -216,6 +216,7 @@ public final class CameraViewController: UIViewController {
         strongSelf.setupSessionInput(for: .back)
         strongSelf.setupSessionOutput()
         strongSelf.delegate?.cameraViewControllerDidSetupCaptureSession(strongSelf)
+        strongSelf.setupVideoPreviewLayerOrientation()
       } else {
         strongSelf.delegate?.cameraViewControllerDidFailToSetupCaptureSession(strongSelf)
       }
