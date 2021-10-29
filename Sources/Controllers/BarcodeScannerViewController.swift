@@ -14,12 +14,23 @@ public protocol BarcodeScannerCodeDelegate: class {
 
 /// Delegate to report errors.
 public protocol BarcodeScannerErrorDelegate: class {
-  func scanner(_ controller: BarcodeScannerViewController, didReceiveError error: Error)
+  func scanner(_ controller: BarcodeScannerViewController, didReceiveError error: BarcodeScannerError)
 }
 
 /// Delegate to dismiss barcode scanner when the close button has been pressed.
 public protocol BarcodeScannerDismissalDelegate: class {
   func scannerDidDismiss(_ controller: BarcodeScannerViewController)
+}
+
+// MARK: - Error types
+
+public enum BarcodeScannerError: Error {
+  /// Error when something besides a MachineReadableCodeObject was detected. (Check AVMetadataObject.ObjectType documentation)
+  case nonMachineReadableCodeDetected
+  /// Error describing an unexpected/general error
+  case unexpected(Error)
+  /// Error when a MachineReadableCodeObject was detected but its metadata is unsupported
+  case unsupported
 }
 
 // MARK: - Controller
@@ -44,6 +55,9 @@ open class BarcodeScannerViewController: UIViewController {
   public weak var errorDelegate: BarcodeScannerErrorDelegate?
   /// Delegate to dismiss barcode scanner when the close button has been pressed.
   public weak var dismissalDelegate: BarcodeScannerDismissalDelegate?
+
+  /// Stop scanning when other object besides a MachineReadableCodeObject is detected
+  public var stopCaptureWhenDetectingOtherObject = true
 
   /// `AVCaptureMetadataOutput` metadata object types.
   public var metadata = AVMetadataObject.ObjectType.barcodeScannerMetadata {
@@ -236,7 +250,7 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
   }
 
   func cameraViewController(_ controller: CameraViewController, didReceiveError error: Error) {
-    errorDelegate?.scanner(self, didReceiveError: error)
+    errorDelegate?.scanner(self, didReceiveError: .unexpected(error))
   }
 
   func cameraViewControllerDidTapSettingsButton(_ controller: CameraViewController) {
@@ -251,15 +265,17 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
                             didOutput metadataObjects: [AVMetadataObject]) {
     guard !locked && isVisible else { return }
     guard !metadataObjects.isEmpty else { return }
+    guard let metadataObj = metadataObjects.first as? AVMetadataMachineReadableCodeObject else {
+      if self.stopCaptureWhenDetectingOtherObject { controller.stopCapturing() }
+      errorDelegate?.scanner(self, didReceiveError: .nonMachineReadableCodeDetected)
+      return
+    }
+
     controller.stopCapturing()
-    
-    guard
-      let metadataObj = metadataObjects[0] as? AVMetadataMachineReadableCodeObject,
-      var code = metadataObj.stringValue,
-      metadata.contains(metadataObj.type)
-      else {
-        errorDelegate?.scanner(self, didReceiveError: NSError())
-        return
+
+    guard var code = metadataObj.stringValue, metadata.contains(metadataObj.type) else {
+      errorDelegate?.scanner(self, didReceiveError: .unsupported)
+      return
     }
 
     var rawType = metadataObj.type.rawValue
