@@ -132,6 +132,16 @@ open class BarcodeScannerViewController: UIViewController {
     isVisible = false
   }
 
+  // MARK: - Camera capture session
+
+  public func stopCameraCapture() {
+    self.cameraViewController.stopCapturing()
+  }
+
+  public func resumeCameraCapture() {
+    self.cameraViewController.startCapturing()
+  }
+
   // MARK: - State handling
 
   /**
