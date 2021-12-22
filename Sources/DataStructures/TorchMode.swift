@@ -16,16 +16,6 @@ public enum TorchMode {
     }
   }
 
-  /// Torch mode image.
-  var image: UIImage {
-    switch self {
-    case .on:
-      return imageNamed("flashOn")
-    case .off:
-      return imageNamed("flashOff")
-    }
-  }
-
   /// Returns `AVCaptureTorchMode` value.
   var captureTorchMode: AVCaptureDevice.TorchMode {
     switch self {
@@ -33,6 +23,16 @@ public enum TorchMode {
       return .on
     case .off:
       return .off
+    }
+  }
+
+  /// Torch mode image.
+  func image(fromViewModel viewModel: FlashButtonProtocol) -> UIImage? {
+    switch self {
+    case .on:
+      return imageNamed("flashOn")
+    case .off:
+      return imageNamed("flashOff")
     }
   }
 }

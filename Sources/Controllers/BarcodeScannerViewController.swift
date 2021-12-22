@@ -77,9 +77,9 @@ open class BarcodeScannerViewController: UIViewController {
 
   // MARK: - UI
 
-  public private(set) lazy var footerVC: FooterViewController = .init()
-  public private(set) lazy var cameraViewController: CameraViewController = .init()
-  public private(set) lazy var cameraHeaderVC: CameraHeaderViewController = .init()
+  public private(set) var footerVC: FooterViewController
+  public private(set) var cameraViewController: CameraViewController
+  public private(set) var cameraHeaderVC: CameraHeaderViewController
 
   // Constraints that are activated when the view is used as a footer.
   private lazy var collapsedConstraints: [NSLayoutConstraint] = self.makeCollapsedConstraints()
@@ -96,6 +96,22 @@ open class BarcodeScannerViewController: UIViewController {
     didSet {
       changeStatus(from: oldValue, to: status)
     }
+  }
+
+  // MARK: - Initializer
+  init(
+    headerViewModel: CameraHeaderViewProtocol = DefaultCameraHeaderViewModel(),
+    cameraViewModel: CameraViewModelProtocol = DefaultCameraViewModel(),
+    footerViewModel: FooterViewModelProtocol = DefaultFooterViewModel()
+  ) {
+    self.cameraHeaderVC = CameraHeaderViewController(viewModel: headerViewModel)
+    self.cameraViewController = CameraViewController(viewModel: cameraViewModel)
+    self.footerVC = FooterViewController(viewModel: footerViewModel)
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  required public init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
   }
 
   // MARK: - View lifecycle

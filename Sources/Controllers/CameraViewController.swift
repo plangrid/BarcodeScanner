@@ -66,7 +66,10 @@ public final class CameraViewController: UIViewController {
         captureDevice.unlockForConfiguration()
       } catch {}
 
-      flashButton.setImage(torchMode.image, for: .normal)
+      flashButton.setImage(
+        torchMode.image(fromViewModel: self.viewModel.flashButton),
+        for: .normal
+      )
     }
   }
 
@@ -78,7 +81,17 @@ public final class CameraViewController: UIViewController {
     return AVCaptureDevice.default(for: .video)
   }
 
+  private let viewModel: CameraViewModelProtocol
+
   // MARK: - Initialization
+  init(viewModel: CameraViewModelProtocol = DefaultCameraViewModel()) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
 
   deinit {
     stopCapturing()
@@ -413,7 +426,7 @@ private extension CameraViewController {
   func makeSettingsButton() -> UIButton {
     let button = UIButton(type: .system)
     let title = NSAttributedString(
-      string: localizedString("BUTTON_SETTINGS"),
+      string: viewModel.settingsButtonTitle,
       attributes: [.font: UIFont.boldSystemFont(ofSize: 17), .foregroundColor: UIColor.white]
     )
     button.setAttributedTitle(title, for: .normal)
@@ -423,7 +436,7 @@ private extension CameraViewController {
 
   func makeCameraButton() -> UIButton {
     let button = UIButton(type: .custom)
-    button.setImage(imageNamed("cameraRotate"), for: .normal)
+    button.setImage(viewModel.cameraImage, for: .normal)
     button.isHidden = !showsCameraButton
     return button
   }
