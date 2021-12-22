@@ -25,7 +25,8 @@ public protocol BarcodeScannerDismissalDelegate: AnyObject {
 // MARK: - Error types
 
 public enum BarcodeScannerError: Error {
-  /// Error when something besides a MachineReadableCodeObject was detected. (Check AVMetadataObject.ObjectType documentation)
+  /// Error when something besides a MachineReadableCodeObject was detected.
+  /// (Check AVMetadataObject.ObjectType documentation)
   case nonMachineReadableCodeDetected
   /// Error describing an unexpected/general error
   case unexpected(Error)
@@ -256,7 +257,10 @@ private extension BarcodeScannerViewController {
 
         headerView.topAnchor.constraint(equalTo: view.topAnchor),
         headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-        headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: BarcodeScannerViewController.headerRightPadding),
+        headerView.trailingAnchor.constraint(
+            equalTo: view.trailingAnchor,
+            constant: BarcodeScannerViewController.headerRightPadding
+        ),
         headerView.heightAnchor.constraint(
             equalToConstant: BarcodeScannerViewController.headerHeight
         )

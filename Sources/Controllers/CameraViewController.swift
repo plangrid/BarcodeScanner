@@ -95,7 +95,6 @@ public final class CameraViewController: UIViewController {
 
   deinit {
     stopCapturing()
-    NotificationCenter.default.removeObserver(self)
   }
 
   // MARK: - View lifecycle
