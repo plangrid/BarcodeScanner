@@ -36,7 +36,7 @@ public final class CameraHeaderViewController: UIViewController {
     required init?(coder: NSCoder) {
       fatalError("init(coder:) has not been implemented")
     }
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
@@ -45,12 +45,12 @@ public final class CameraHeaderViewController: UIViewController {
         qrLabel = makeLabel(text: viewModel.qrSubtitle)
         barcodeImageView = makeImageView(image: viewModel.barcodeImage)
         qrImageView = makeImageView(image: viewModel.qrImage)
-        qrStack = makeStackView(arrangedSubviews: [qrImageView,qrLabel])
-        barcodeStack = makeStackView(arrangedSubviews: [barcodeImageView,barcodeLabel])
-        view.addSubviews(titleLabel,barcodeStack,qrStack)
+        qrStack = makeStackView(arrangedSubviews: [qrImageView, qrLabel])
+        barcodeStack = makeStackView(arrangedSubviews: [barcodeImageView, barcodeLabel])
+        view.addSubviews(titleLabel, barcodeStack, qrStack)
         applyConstraints()
     }
-    
+
     private func makeLabel(text: String) -> UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -59,22 +59,22 @@ public final class CameraHeaderViewController: UIViewController {
         label.font = UIFont(name: "ArtifaktElement-Regular", size: 18)
         return label
     }
-    
+
     private func makeImageView(image: UIImage?) -> UIImageView {
         let imageView = UIImageView(image: image)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.backgroundColor = .white
         return imageView
     }
-    
-    private func makeStackView(arrangedSubviews: [UIView]) -> UIStackView{
+
+    private func makeStackView(arrangedSubviews: [UIView]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: arrangedSubviews)
         stackView.distribution = .equalSpacing
         stackView.spacing = stackViewSpacing
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }
-    
+
     private func applyConstraints() {
         applyTitleLabelConstraints()
         applyStackViewsConstraints()
@@ -82,7 +82,7 @@ public final class CameraHeaderViewController: UIViewController {
         applyImageViewConstraints(for: qrImageView)
         applySubLabelConstraints()
     }
-    
+
     private func applyTitleLabelConstraints() {
         titleLabel.widthAnchor.constraint(equalToConstant: titleWidth).isActive = true
         titleLabel.heightAnchor.constraint(equalToConstant: titleHeight).isActive = true
@@ -98,12 +98,12 @@ public final class CameraHeaderViewController: UIViewController {
         qrStack.topAnchor.constraint(equalTo: barcodeStack.bottomAnchor,
                                      constant: stackViewOffset).isActive = true
     }
-    
+
     private func applyImageViewConstraints(for imageView: UIImageView) {
         imageView.heightAnchor.constraint(equalToConstant: imageSize).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: imageSize).isActive = true
     }
-    
+
     private func applySubLabelConstraints() {
         barcodeLabel.heightAnchor.constraint(equalToConstant: imageSize).isActive = true
         qrLabel.heightAnchor.constraint(equalToConstant: imageSize).isActive = true

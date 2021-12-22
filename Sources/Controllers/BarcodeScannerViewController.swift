@@ -4,7 +4,7 @@ import AVFoundation
 // MARK: - Delegates
 
 /// Delegate to handle the captured code.
-public protocol BarcodeScannerCodeDelegate: class {
+public protocol BarcodeScannerCodeDelegate: AnyObject {
   func scanner(
     _ controller: BarcodeScannerViewController,
     didCaptureCode code: String,
@@ -13,12 +13,12 @@ public protocol BarcodeScannerCodeDelegate: class {
 }
 
 /// Delegate to report errors.
-public protocol BarcodeScannerErrorDelegate: class {
+public protocol BarcodeScannerErrorDelegate: AnyObject {
   func scanner(_ controller: BarcodeScannerViewController, didReceiveError error: BarcodeScannerError)
 }
 
 /// Delegate to dismiss barcode scanner when the close button has been pressed.
-public protocol BarcodeScannerDismissalDelegate: class {
+public protocol BarcodeScannerDismissalDelegate: AnyObject {
   func scannerDidDismiss(_ controller: BarcodeScannerViewController)
 }
 
@@ -131,7 +131,7 @@ open class BarcodeScannerViewController: UIViewController {
     cameraViewController.metadata = metadata
     cameraViewController.delegate = self
     add(childViewController: cameraViewController)
-    
+
     view.bringSubviewToFront(footerView)
     view.bringSubviewToFront(headerView)
 
@@ -253,7 +253,7 @@ private extension BarcodeScannerViewController {
       footerView.heightAnchor.constraint(
         equalToConstant: BarcodeScannerViewController.footerHeight
       ),
-      
+
         headerView.topAnchor.constraint(equalTo: view.topAnchor),
         headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
         headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: BarcodeScannerViewController.headerRightPadding),
