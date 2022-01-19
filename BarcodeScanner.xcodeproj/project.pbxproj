@@ -13,6 +13,7 @@
 		00B66712230E5BDD00ABA25C /* qrcode@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00B66711230E5BDD00ABA25C /* qrcode@3x.png */; };
 		0A2EEB0227988B270073833E /* BarcodeScannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEB0127988B270073833E /* BarcodeScannerModel.swift */; };
 		0A2EEB0427988B720073833E /* CameraControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEB0327988B720073833E /* CameraControllerProtocol.swift */; };
+		0A2EEB0627988C440073833E /* AlloyScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEB0527988C440073833E /* AlloyScannerViewController.swift */; };
 		2DBF9E0E1F169DEF006B5AA8 /* FocusViewType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBF9E0D1F169DEF006B5AA8 /* FocusViewType.swift */; };
 		D504555F1FD8714700E46826 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504555E1FD8714700E46826 /* UIView+Extensions.swift */; };
 		D50BE3E91C9FE7A80000A34C /* flashOff@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D50BE3E51C9FE7A80000A34C /* flashOff@3x.png */; };
@@ -37,6 +38,7 @@
 		00B66711230E5BDD00ABA25C /* qrcode@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "qrcode@3x.png"; sourceTree = "<group>"; };
 		0A2EEB0127988B270073833E /* BarcodeScannerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarcodeScannerModel.swift; sourceTree = "<group>"; };
 		0A2EEB0327988B720073833E /* CameraControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraControllerProtocol.swift; sourceTree = "<group>"; };
+		0A2EEB0527988C440073833E /* AlloyScannerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlloyScannerViewController.swift; sourceTree = "<group>"; };
 		2DBF9E0D1F169DEF006B5AA8 /* FocusViewType.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = FocusViewType.swift; sourceTree = "<group>"; tabWidth = 2; };
 		D504555E1FD8714700E46826 /* UIView+Extensions.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; tabWidth = 2; };
 		D50BE3E51C9FE7A80000A34C /* flashOff@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flashOff@3x.png"; sourceTree = "<group>"; };
@@ -83,6 +85,7 @@
 		D55281B42016758000FF3CDD /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				0A2EEB0527988C440073833E /* AlloyScannerViewController.swift */,
 				00B666F4230D390800ABA25C /* FooterViewController.swift */,
 				D55281B92016770800FF3CDD /* CameraViewController.swift */,
 				D55281BB2016782C00FF3CDD /* BarcodeScannerViewController.swift */,
@@ -273,6 +276,7 @@
 				D5CB3783201944DE00B9319D /* AVMetadataObject+Extensions.swift in Sources */,
 				D5CB377F2017ED2E00B9319D /* VideoPermissionService.swift in Sources */,
 				2DBF9E0E1F169DEF006B5AA8 /* FocusViewType.swift in Sources */,
+				0A2EEB0627988C440073833E /* AlloyScannerViewController.swift in Sources */,
 				D504555F1FD8714700E46826 /* UIView+Extensions.swift in Sources */,
 				0A2EEB0427988B720073833E /* CameraControllerProtocol.swift in Sources */,
 				00B666FF230D44A900ABA25C /* CameraHeaderViewController.swift in Sources */,
