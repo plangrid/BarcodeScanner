@@ -2,7 +2,7 @@ import UIKit
 import AVFoundation
 
 /// Delegate to handle camera setup and video capturing.
-protocol CameraViewControllerDelegate: class {
+public protocol CameraViewControllerDelegate: class {
   func cameraViewControllerDidSetupCaptureSession(_ controller: CameraViewController)
   func cameraViewControllerDidFailToSetupCaptureSession(_ controller: CameraViewController)
   func cameraViewController(_ controller: CameraViewController, didReceiveError error: Error)
@@ -14,8 +14,8 @@ protocol CameraViewControllerDelegate: class {
 }
 
 /// View controller responsible for camera controls and video capturing.
-public final class CameraViewController: UIViewController {
-  weak var delegate: CameraViewControllerDelegate?
+public final class CameraViewController: UIViewController, CameraControllerProtocol {
+  weak public var delegate: CameraViewControllerDelegate?
 
   /// Focus view type.
   public var barCodeFocusViewType: FocusViewType = .animated
@@ -26,7 +26,7 @@ public final class CameraViewController: UIViewController {
     }
   }
   /// `AVCaptureMetadataOutput` metadata object types.
-  var metadata = [AVMetadataObject.ObjectType]()
+  public var metadata = [AVMetadataObject.ObjectType]()
 
   // MARK: - UI proterties
 
@@ -128,7 +128,7 @@ public final class CameraViewController: UIViewController {
 
   // MARK: - Video capturing
 
-  func startCapturing() {
+  public func startCapturing() {
     guard !isSimulatorRunning else {
       return
     }
@@ -140,7 +140,7 @@ public final class CameraViewController: UIViewController {
     cameraButton.isHidden = !showsCameraButton
   }
 
-  func stopCapturing() {
+  public func stopCapturing() {
     guard !isSimulatorRunning else {
       return
     }
@@ -438,3 +438,4 @@ extension CameraViewController: AVCaptureMetadataOutputObjectsDelegate {
     delegate?.cameraViewController(self, didOutput: metadataObjects)
   }
 }
+

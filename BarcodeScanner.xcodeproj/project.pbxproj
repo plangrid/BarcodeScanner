@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0A2EEAF6279881BE0073833E /* BarcodeScannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEAF5279881BE0073833E /* BarcodeScannerModel.swift */; };
+		0A2EEAF8279882770073833E /* CameraControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEAF7279882770073833E /* CameraControllerProtocol.swift */; };
+		0A2EEAFA2798828A0073833E /* AlloyScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEAF9279882890073833E /* AlloyScannerViewController.swift */; };
 		2DBF9E0E1F169DEF006B5AA8 /* FocusViewType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBF9E0D1F169DEF006B5AA8 /* FocusViewType.swift */; };
 		CE8C0771252FBBAF007FF4A4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE8C0770252FBBAF007FF4A4 /* Images.xcassets */; };
 		D504555F1FD8714700E46826 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504555E1FD8714700E46826 /* UIView+Extensions.swift */; };
@@ -26,6 +28,8 @@
 
 /* Begin PBXFileReference section */
 		0A2EEAF5279881BE0073833E /* BarcodeScannerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarcodeScannerModel.swift; sourceTree = "<group>"; };
+		0A2EEAF7279882770073833E /* CameraControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraControllerProtocol.swift; sourceTree = "<group>"; };
+		0A2EEAF9279882890073833E /* AlloyScannerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlloyScannerViewController.swift; sourceTree = "<group>"; };
 		2DBF9E0D1F169DEF006B5AA8 /* FocusViewType.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = FocusViewType.swift; sourceTree = "<group>"; tabWidth = 2; };
 		CE8C0770252FBBAF007FF4A4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		D504555E1FD8714700E46826 /* UIView+Extensions.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; tabWidth = 2; };
@@ -70,6 +74,7 @@
 				D55281B7201675D500FF3CDD /* MessageViewController.swift */,
 				D55281B92016770800FF3CDD /* CameraViewController.swift */,
 				D55281BB2016782C00FF3CDD /* BarcodeScannerViewController.swift */,
+				0A2EEAF9279882890073833E /* AlloyScannerViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -129,6 +134,7 @@
 				D5C4E08D1CA0BFB9008D9269 /* TorchMode.swift */,
 				2DBF9E0D1F169DEF006B5AA8 /* FocusViewType.swift */,
 				0A2EEAF5279881BE0073833E /* BarcodeScannerModel.swift */,
+				0A2EEAF7279882770073833E /* CameraControllerProtocol.swift */,
 			);
 			path = DataStructures;
 			sourceTree = "<group>";
@@ -233,7 +239,9 @@
 				D55281BC2016782C00FF3CDD /* BarcodeScannerViewController.swift in Sources */,
 				D5CB3783201944DE00B9319D /* AVMetadataObject+Extensions.swift in Sources */,
 				D5CB377F2017ED2E00B9319D /* VideoPermissionService.swift in Sources */,
+				0A2EEAFA2798828A0073833E /* AlloyScannerViewController.swift in Sources */,
 				2DBF9E0E1F169DEF006B5AA8 /* FocusViewType.swift in Sources */,
+				0A2EEAF8279882770073833E /* CameraControllerProtocol.swift in Sources */,
 				D504555F1FD8714700E46826 /* UIView+Extensions.swift in Sources */,
 				D5FC8AD71D252A12004BED88 /* State.swift in Sources */,
 				D55281B62016758F00FF3CDD /* HeaderViewController.swift in Sources */,

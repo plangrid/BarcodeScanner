@@ -278,19 +278,19 @@ extension BarcodeScannerViewController: HeaderViewControllerDelegate {
 // MARK: - CameraViewControllerDelegate
 
 extension BarcodeScannerViewController: CameraViewControllerDelegate {
-  func cameraViewControllerDidSetupCaptureSession(_ controller: CameraViewController) {
+  public func cameraViewControllerDidSetupCaptureSession(_ controller: CameraViewController) {
     status = Status(state: .scanning)
   }
 
-  func cameraViewControllerDidFailToSetupCaptureSession(_ controller: CameraViewController) {
+  public func cameraViewControllerDidFailToSetupCaptureSession(_ controller: CameraViewController) {
     status = Status(state: .unauthorized)
   }
 
-  func cameraViewController(_ controller: CameraViewController, didReceiveError error: Error) {
-    errorDelegate?.scanner(self, didReceiveError: error)
+  public func cameraViewController(_ controller: CameraViewController, didReceiveError error: Error) {
+    errorDelegate?.scanner(self, didReceiveError: error as! BarcodeScannerError)
   }
 
-  func cameraViewControllerDidTapSettingsButton(_ controller: CameraViewController) {
+  public func cameraViewControllerDidTapSettingsButton(_ controller: CameraViewController) {
     DispatchQueue.main.async {
       if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
         UIApplication.shared.open(settingsURL, options: [:], completionHandler: nil)
@@ -298,7 +298,7 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
     }
   }
 
-  func cameraViewController(_ controller: CameraViewController,
+  public func cameraViewController(_ controller: CameraViewController,
                             didOutput metadataObjects: [AVMetadataObject]) {
     guard !locked && isVisible else { return }
     guard !metadataObjects.isEmpty else { return }
