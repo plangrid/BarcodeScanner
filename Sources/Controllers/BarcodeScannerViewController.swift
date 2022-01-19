@@ -1,29 +1,6 @@
 import UIKit
 import AVFoundation
 
-// MARK: - Delegates
-
-/// Delegate to handle the captured code.
-public protocol BarcodeScannerCodeDelegate: class {
-  func scanner(
-    _ controller: BarcodeScannerViewController,
-    didCaptureCode code: String,
-    type: String
-  )
-}
-
-/// Delegate to report errors.
-public protocol BarcodeScannerErrorDelegate: class {
-  func scanner(_ controller: BarcodeScannerViewController, didReceiveError error: Error)
-}
-
-/// Delegate to dismiss barcode scanner when the close button has been pressed.
-public protocol BarcodeScannerDismissalDelegate: class {
-  func scannerDidDismiss(_ controller: BarcodeScannerViewController)
-}
-
-// MARK: - Controller
-
 /**
  Barcode scanner controller with 4 sates:
  - Scanning mode
