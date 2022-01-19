@@ -24,30 +24,18 @@ public final class CameraHeaderViewController: UIViewController {
     private var barcodeStack: UIStackView!
     private var qrStack: UIStackView!
 
-    // MARK: - Viewmodel
-    private let viewModel: CameraHeaderViewProtocol
-
-    // MARK: - Initializer
-    init(viewModel: CameraHeaderViewProtocol = DefaultCameraHeaderViewModel()) {
-      self.viewModel = viewModel
-      super.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder: NSCoder) {
-      fatalError("init(coder:) has not been implemented")
-    }
 
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
-        titleLabel = makeLabel(text: viewModel.title)
-        barcodeLabel = makeLabel(text: viewModel.barCodeSubtitle)
-        qrLabel = makeLabel(text: viewModel.qrSubtitle)
-        barcodeImageView = makeImageView(image: viewModel.barcodeImage)
-        qrImageView = makeImageView(image: viewModel.qrImage)
-        qrStack = makeStackView(arrangedSubviews: [qrImageView, qrLabel])
-        barcodeStack = makeStackView(arrangedSubviews: [barcodeImageView, barcodeLabel])
-        view.addSubviews(titleLabel, barcodeStack, qrStack)
+        titleLabel = makeLabel(text: localizedString("SCAN_TITLE"))
+        barcodeLabel = makeLabel(text: localizedString("SCAN_BARCODE_SUBTITLE"))
+        qrLabel = makeLabel(text: localizedString("SCAN_QRCODE_SUBTITLE"))
+        barcodeImageView = makeImageView(imageName: "barcode")
+        qrImageView = makeImageView(imageName: "qrcode")
+        qrStack = makeStackView(arrangedSubviews: [qrImageView,qrLabel])
+        barcodeStack = makeStackView(arrangedSubviews: [barcodeImageView,barcodeLabel])
+        view.addSubviews(titleLabel,barcodeStack,qrStack)
         applyConstraints()
     }
 
@@ -60,14 +48,14 @@ public final class CameraHeaderViewController: UIViewController {
         return label
     }
 
-    private func makeImageView(image: UIImage?) -> UIImageView {
-        let imageView = UIImageView(image: image)
+    private func makeImageView(imageName: String) -> UIImageView {
+        let imageView = UIImageView(image: imageNamed(imageName))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.backgroundColor = .white
         return imageView
     }
 
-    private func makeStackView(arrangedSubviews: [UIView]) -> UIStackView {
+    private func makeStackView(arrangedSubviews: [UIView]) -> UIStackView{
         let stackView = UIStackView(arrangedSubviews: arrangedSubviews)
         stackView.distribution = .equalSpacing
         stackView.spacing = stackViewSpacing
