@@ -2,7 +2,7 @@ import UIKit
 import AVFoundation
 
 /// Delegate to handle camera setup and video capturing.
-protocol CameraViewControllerDelegate: AnyObject {
+public protocol CameraViewControllerDelegate: class {
   func cameraViewControllerDidSetupCaptureSession(_ controller: CameraViewController)
   func cameraViewControllerDidFailToSetupCaptureSession(_ controller: CameraViewController)
   func cameraViewController(_ controller: CameraViewController, didReceiveError error: Error)
@@ -14,18 +14,19 @@ protocol CameraViewControllerDelegate: AnyObject {
 }
 
 /// View controller responsible for camera controls and video capturing.
-public final class CameraViewController: UIViewController {
-  weak var delegate: CameraViewControllerDelegate?
+public final class CameraViewController: UIViewController, CameraControllerProtocol {
+  weak public var delegate: CameraViewControllerDelegate?
 
   /// Focus view type.
   public var barCodeFocusViewType: FocusViewType = .animated
+  public var initialCameraPosition: AVCaptureDevice.Position = .back
   public var showsCameraButton: Bool = false {
     didSet {
       cameraButton.isHidden = showsCameraButton
     }
   }
   /// `AVCaptureMetadataOutput` metadata object types.
-  var metadata = [AVMetadataObject.ObjectType]()
+  public var metadata = [AVMetadataObject.ObjectType]()
 
   // MARK: - UI proterties
 
@@ -67,7 +68,7 @@ public final class CameraViewController: UIViewController {
       } catch {}
 
       flashButton.setImage(
-        torchMode.image(fromViewModel: self.viewModel.flashButton),
+        torchMode.image,
         for: .normal
       )
     }
@@ -81,20 +82,11 @@ public final class CameraViewController: UIViewController {
     return AVCaptureDevice.default(for: .video)
   }
 
-  private let viewModel: CameraViewModelProtocol
-
   // MARK: - Initialization
-  init(viewModel: CameraViewModelProtocol = DefaultCameraViewModel()) {
-    self.viewModel = viewModel
-    super.init(nibName: nil, bundle: nil)
-  }
-
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
 
   deinit {
     stopCapturing()
+    NotificationCenter.default.removeObserver(self)
   }
 
   // MARK: - View lifecycle
@@ -139,7 +131,7 @@ public final class CameraViewController: UIViewController {
 
   // MARK: - Video capturing
 
-  func startCapturing() {
+  public func startCapturing() {
     guard !isSimulatorRunning else {
       return
     }
@@ -151,7 +143,7 @@ public final class CameraViewController: UIViewController {
     cameraButton.isHidden = !showsCameraButton
   }
 
-  func stopCapturing() {
+  public func stopCapturing() {
     guard !isSimulatorRunning else {
       return
     }
@@ -225,10 +217,9 @@ public final class CameraViewController: UIViewController {
       }
 
       if error == nil {
-        strongSelf.setupSessionInput(for: .back)
+        strongSelf.setupSessionInput(for: strongSelf.initialCameraPosition)
         strongSelf.setupSessionOutput()
         strongSelf.delegate?.cameraViewControllerDidSetupCaptureSession(strongSelf)
-        strongSelf.setupVideoPreviewLayerOrientation()
       } else {
         strongSelf.delegate?.cameraViewControllerDidFailToSetupCaptureSession(strongSelf)
       }
@@ -425,17 +416,17 @@ private extension CameraViewController {
   func makeSettingsButton() -> UIButton {
     let button = UIButton(type: .system)
     let title = NSAttributedString(
-      string: viewModel.settingsButtonTitle,
+      string: localizedString("BUTTON_SETTINGS"),
       attributes: [.font: UIFont.boldSystemFont(ofSize: 17), .foregroundColor: UIColor.white]
     )
-    button.setAttributedTitle(title, for: .normal)
+    button.setAttributedTitle(title, for: UIControl.State())
     button.sizeToFit()
     return button
   }
 
   func makeCameraButton() -> UIButton {
     let button = UIButton(type: .custom)
-    button.setImage(viewModel.cameraImage, for: .normal)
+    button.setImage(imageNamed("cameraRotate"), for: UIControl.State())
     button.isHidden = !showsCameraButton
     return button
   }
