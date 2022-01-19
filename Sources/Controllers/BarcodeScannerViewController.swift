@@ -28,7 +28,7 @@ open class BarcodeScannerViewController: UIViewController {
   /// `AVCaptureMetadataOutput` metadata object types.
   public var metadata = AVMetadataObject.ObjectType.barcodeScannerMetadata {
     didSet {
-      cameraViewController.metadata = metadata
+      cameraViewController?.metadata = metadata
     }
   }
 
@@ -43,25 +43,42 @@ open class BarcodeScannerViewController: UIViewController {
 
   // MARK: - UI
 
-  public private(set) lazy var footerVC: FooterViewController = .init()
-  public private(set) lazy var cameraViewController: CameraViewController = .init()
-  public private(set) lazy var cameraHeaderVC: CameraHeaderViewController = .init()
+  public private(set) var footerVC: FooterViewController?
+  private(set) var cameraViewController: CameraControllerProtocol?
+  public private(set) var cameraHeaderVC: CameraHeaderViewController?
 
   // Constraints that are activated when the view is used as a footer.
   private lazy var collapsedConstraints: [NSLayoutConstraint] = self.makeCollapsedConstraints()
 
   private var footerView: UIView {
-    return footerVC.view
+    return footerVC?.view ?? UIView()
   }
 
-    private var headerView: UIView {
-        return cameraHeaderVC.view
-    }
+  private var headerView: UIView {
+    return cameraHeaderVC?.view ?? UIView()
+  }
+
   /// The current controller's status mode.
   private var status: Status = Status(state: .scanning) {
     didSet {
       changeStatus(from: oldValue, to: status)
     }
+  }
+
+  // MARK: - Initializer
+  public init(
+    footerController: FooterViewController? = FooterViewController(),
+    cameraController: CameraViewType? = .normal,
+    headerController: CameraHeaderViewController? = CameraHeaderViewController()
+  ) {
+    super.init(nibName: nil, bundle: nil)
+    self.footerVC = footerController
+    self.cameraViewController = cameraController?.controller
+    self.cameraHeaderVC = headerController
+  }
+
+  required public init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
   }
 
   // MARK: - View lifecycle
@@ -70,21 +87,15 @@ open class BarcodeScannerViewController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = UIColor.black
 
-    add(childViewController: footerVC)
-    add(childViewController: cameraHeaderVC)
+    view.backgroundColor = UIColor.black
 
-    footerView.translatesAutoresizingMaskIntoConstraints = false
-    headerView.translatesAutoresizingMaskIntoConstraints = false
+    self.setupCameraController()
+    self.addHeaderIfNeeded()
+    self.addFooterIfNeeded()
+    self.setupCameraConstraints()
 
+    guard footerVC != nil && cameraHeaderVC != nil else { return }
     collapsedConstraints.activate()
-
-    cameraViewController.metadata = metadata
-    cameraViewController.delegate = self
-    add(childViewController: cameraViewController)
-    
-    view.bringSubviewToFront(footerView)
-    view.bringSubviewToFront(headerView)
-
   }
 
   open override func viewWillAppear(_ animated: Bool) {
@@ -101,11 +112,11 @@ open class BarcodeScannerViewController: UIViewController {
   // MARK: - Camera capture session
 
   public func stopCameraCapture() {
-    self.cameraViewController.stopCapturing()
+    self.cameraViewController?.stopCapturing()
   }
 
   public func resumeCameraCapture() {
-    self.cameraViewController.startCapturing()
+    self.cameraViewController?.startCapturing()
   }
 
   // MARK: - State handling
@@ -145,10 +156,31 @@ open class BarcodeScannerViewController: UIViewController {
   private func resetState() {
     locked = status.state == .processing
     if status.state == .scanning {
-      cameraViewController.startCapturing()
+      cameraViewController?.startCapturing()
     } else {
-      cameraViewController.stopCapturing()
+      cameraViewController?.stopCapturing()
     }
+  }
+
+  private func setupCameraController() {
+    guard let cameraViewController = cameraViewController as? UIViewController else { return }
+    self.cameraViewController?.metadata = metadata
+    self.cameraViewController?.delegate = self
+    add(childViewController: cameraViewController)
+  }
+
+  private func addHeaderIfNeeded() {
+    guard let header = self.cameraHeaderVC else { return }
+    add(childViewController: header)
+    headerView.translatesAutoresizingMaskIntoConstraints = false
+    view.bringSubviewToFront(headerView)
+  }
+
+  private func addFooterIfNeeded() {
+    guard let footer = self.footerVC else { return }
+    add(childViewController: footer)
+    footerView.translatesAutoresizingMaskIntoConstraints = false
+    view.bringSubviewToFront(footerView)
   }
 
   // MARK: - Animations
@@ -185,13 +217,16 @@ private extension BarcodeScannerViewController {
     }
 
     constraintsActivated = true
-    let cameraView = cameraViewController.view!
+
+    guard let cameraView = (cameraViewController as? UIViewController)?.view else { return }
+    let isFooterAvailable = self.footerVC != nil
+    let isHeaderAvailable = self.cameraHeaderVC != nil
 
     NSLayoutConstraint.activate(
       cameraView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       cameraView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-      cameraView.bottomAnchor.constraint(equalTo: footerView.bottomAnchor),
-      cameraView.topAnchor.constraint(equalTo: headerView.topAnchor)
+      cameraView.bottomAnchor.constraint(equalTo: isFooterAvailable ? footerView.bottomAnchor : view.bottomAnchor),
+      cameraView.topAnchor.constraint(equalTo: isHeaderAvailable ? headerView.topAnchor : view.topAnchor)
     )
   }
 
