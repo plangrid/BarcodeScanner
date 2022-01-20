@@ -9,6 +9,7 @@ import AVFoundation
  - Not found error message
  */
 open class BarcodeScannerViewController: UIViewController {
+
   private static let footerHeight: CGFloat = 91
   private static let headerHeight: CGFloat = 173
   private static let headerRightPadding: CGFloat = -50
@@ -40,6 +41,9 @@ open class BarcodeScannerViewController: UIViewController {
   private var constraintsActivated = false
   /// Flag to check if view controller is currently on screen
   private var isVisible = false
+
+  // MARK: - MultiScan Properties
+  var isMultiScanEnabled: Bool = true
 
   // MARK: - UI
 
@@ -219,6 +223,7 @@ private extension BarcodeScannerViewController {
     constraintsActivated = true
 
     guard let cameraView = (cameraViewController as? UIViewController)?.view else { return }
+    cameraViewController?.multiScanDelegate = self
     let isFooterAvailable = self.footerVC != nil
     let isHeaderAvailable = self.cameraHeaderVC != nil
 
@@ -238,13 +243,13 @@ private extension BarcodeScannerViewController {
       footerView.heightAnchor.constraint(
         equalToConstant: BarcodeScannerViewController.footerHeight
       ),
-      
-        headerView.topAnchor.constraint(equalTo: view.topAnchor),
-        headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-        headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: BarcodeScannerViewController.headerRightPadding),
-        headerView.heightAnchor.constraint(
-            equalToConstant: BarcodeScannerViewController.headerHeight
-        )
+
+      headerView.topAnchor.constraint(equalTo: view.topAnchor),
+      headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: BarcodeScannerViewController.headerRightPadding),
+      headerView.heightAnchor.constraint(
+        equalToConstant: BarcodeScannerViewController.headerHeight
+      )
     ]
   }
 }
@@ -252,19 +257,19 @@ private extension BarcodeScannerViewController {
 // MARK: - CameraViewControllerDelegate
 
 extension BarcodeScannerViewController: CameraViewControllerDelegate {
-  func cameraViewControllerDidSetupCaptureSession(_ controller: CameraViewController) {
+  func cameraViewControllerDidSetupCaptureSession(_ controller: CameraControllerProtocol) {
     status = Status(state: .scanning)
   }
 
-  func cameraViewControllerDidFailToSetupCaptureSession(_ controller: CameraViewController) {
+  func cameraViewControllerDidFailToSetupCaptureSession(_ controller: CameraControllerProtocol) {
     status = Status(state: .unauthorized)
   }
 
-  func cameraViewController(_ controller: CameraViewController, didReceiveError error: Error) {
+  func cameraViewController(_ controller: CameraControllerProtocol, didReceiveError error: Error) {
     errorDelegate?.scanner(self, didReceiveError: .unexpected(error))
   }
 
-  func cameraViewControllerDidTapSettingsButton(_ controller: CameraViewController) {
+  func cameraViewControllerDidTapSettingsButton(_ controller: CameraControllerProtocol) {
     DispatchQueue.main.async {
         if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
         UIApplication.shared.openURL(settingsURL)
@@ -272,7 +277,7 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
     }
   }
 
-  func cameraViewController(_ controller: CameraViewController,
+  func cameraViewController(_ controller: CameraControllerProtocol,
                             didOutput metadataObjects: [AVMetadataObject]) {
     guard !locked && isVisible else { return }
     guard !metadataObjects.isEmpty else { return }
@@ -282,10 +287,13 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
       return
     }
 
-    controller.stopCapturing()
+    if !isMultiScanEnabled {
+      controller.stopCapturing()
+    }
 
     guard var code = metadataObj.stringValue, metadata.contains(metadataObj.type) else {
       errorDelegate?.scanner(self, didReceiveError: .unsupported)
+      if !isMultiScanEnabled { controller.stopCapturing() }
       return
     }
 
@@ -300,5 +308,11 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
 
     codeDelegate?.scanner(self, didCaptureCode: code, type: rawType)
     animateFlash()
+  }
+}
+
+extension BarcodeScannerViewController: MultiScanProtocol {
+  func multiScanChanged(enabled: Bool) {
+    self.isMultiScanEnabled = enabled
   }
 }

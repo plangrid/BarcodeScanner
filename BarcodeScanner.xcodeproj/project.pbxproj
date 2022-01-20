@@ -11,6 +11,7 @@
 		00B666FF230D44A900ABA25C /* CameraHeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B666FE230D44A900ABA25C /* CameraHeaderViewController.swift */; };
 		00B6670C230DC61200ABA25C /* barcode@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00B6670B230DC61200ABA25C /* barcode@3x.png */; };
 		00B66712230E5BDD00ABA25C /* qrcode@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00B66711230E5BDD00ABA25C /* qrcode@3x.png */; };
+		0A03879C279A1ED2009AA963 /* AlloyScannerConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03879B279A1ED2009AA963 /* AlloyScannerConstants.swift */; };
 		0A2EEB0227988B270073833E /* BarcodeScannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEB0127988B270073833E /* BarcodeScannerModel.swift */; };
 		0A2EEB0427988B720073833E /* CameraControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEB0327988B720073833E /* CameraControllerProtocol.swift */; };
 		0A2EEB0627988C440073833E /* AlloyScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEB0527988C440073833E /* AlloyScannerViewController.swift */; };
@@ -36,6 +37,7 @@
 		00B666FE230D44A900ABA25C /* CameraHeaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraHeaderViewController.swift; sourceTree = "<group>"; };
 		00B6670B230DC61200ABA25C /* barcode@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "barcode@3x.png"; sourceTree = "<group>"; };
 		00B66711230E5BDD00ABA25C /* qrcode@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "qrcode@3x.png"; sourceTree = "<group>"; };
+		0A03879B279A1ED2009AA963 /* AlloyScannerConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlloyScannerConstants.swift; sourceTree = "<group>"; };
 		0A2EEB0127988B270073833E /* BarcodeScannerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarcodeScannerModel.swift; sourceTree = "<group>"; };
 		0A2EEB0327988B720073833E /* CameraControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraControllerProtocol.swift; sourceTree = "<group>"; };
 		0A2EEB0527988C440073833E /* AlloyScannerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlloyScannerViewController.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 				2DBF9E0D1F169DEF006B5AA8 /* FocusViewType.swift */,
 				0A2EEB0127988B270073833E /* BarcodeScannerModel.swift */,
 				0A2EEB0327988B720073833E /* CameraControllerProtocol.swift */,
+				0A03879B279A1ED2009AA963 /* AlloyScannerConstants.swift */,
 			);
 			path = DataStructures;
 			sourceTree = "<group>";
@@ -278,6 +281,7 @@
 				2DBF9E0E1F169DEF006B5AA8 /* FocusViewType.swift in Sources */,
 				0A2EEB0627988C440073833E /* AlloyScannerViewController.swift in Sources */,
 				D504555F1FD8714700E46826 /* UIView+Extensions.swift in Sources */,
+				0A03879C279A1ED2009AA963 /* AlloyScannerConstants.swift in Sources */,
 				0A2EEB0427988B720073833E /* CameraControllerProtocol.swift in Sources */,
 				00B666FF230D44A900ABA25C /* CameraHeaderViewController.swift in Sources */,
 				D5FC8AD71D252A12004BED88 /* State.swift in Sources */,

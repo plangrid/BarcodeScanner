@@ -37,3 +37,11 @@ public enum BarcodeScannerError: Error {
   /// Error when a MachineReadableCodeObject was detected but its metadata is unsupported
   case unsupported
 }
+
+protocol MultiScanProtocol: AnyObject {
+  func multiScanChanged(enabled: Bool)
+}
+
+enum AlloyError: Error {
+  case cameraAccessDenied
+}

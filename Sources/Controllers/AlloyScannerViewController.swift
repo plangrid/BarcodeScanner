@@ -10,27 +10,63 @@ import AVFoundation
 import UIKit
 
 class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
+  // MARK: - CameraControllerProtocol Properties
   var metadata: [AVMetadataObject.ObjectType] = [AVMetadataObject.ObjectType]()
-  var delegate: CameraViewControllerDelegate?
+  weak var delegate: CameraViewControllerDelegate?
+  weak var multiScanDelegate: MultiScanProtocol?
+  private let permissionService = VideoPermissionService()
 
-  func startCapturing() {
-    self.captureSession.startRunning()
-  }
-
-  func stopCapturing() {
-    self.captureSession.stopRunning()
-  }
-
-  // MARK: - Properties
+  // MARK: - AVCapture Properties
   private var captureSession = AVCaptureSession()
+  private var captureDevice: AVCaptureDevice?
   private var videoPreviewLayer: AVCaptureVideoPreviewLayer?
   private var captureMetadataOutput = AVCaptureMetadataOutput()
+  /// The current torch mode on the capture device.
+  private var torchMode: TorchMode = .off {
+    didSet {
+      guard let captureDevice = captureDevice, captureDevice.hasFlash else { return }
+      guard captureDevice.isTorchModeSupported(torchMode.captureTorchMode) else { return }
+
+      do {
+        try captureDevice.lockForConfiguration()
+        captureDevice.torchMode = torchMode.captureTorchMode
+        captureDevice.unlockForConfiguration()
+      } catch {}
+      flashButton.setImage(torchMode.image, for: .normal)
+    }
+  }
+  private var isMultiScanEnabled: Bool = false
+
+  // MARK: - UI Properties
   private var focusView: UIView?
   private var borderShapeLayer: CAShapeLayer?
+  private var headerView: UIStackView?
+  private var multiScanView: UIView?
 
+  private lazy var flashButton: UIButton = {
+    let flashButton = UIButton(type: .custom)
+    flashButton.translatesAutoresizingMaskIntoConstraints = false
+    flashButton.addTarget(self, action: #selector(flashButtonTapped), for: .touchUpInside)
+    return flashButton
+  }()
+
+  // MARK: - Actions
+  @objc func flashButtonTapped() {
+    torchMode = torchMode.next
+  }
+
+  @objc func multiScanChanged() {
+    self.isMultiScanEnabled.toggle()
+    self.multiScanDelegate?.multiScanChanged(enabled: isMultiScanEnabled)
+  }
+
+  // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
-    initBarCode()
+    self.setupCamera()
+    self.torchMode = .off
+    self.addFlashButton()
+    self.addMultiScanHeader()
   }
 
   override func viewDidAppear(_ animated: Bool) {
@@ -39,14 +75,28 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
     self.setupRectOfInterest()
   }
 
-  private func initBarCode() {
+  private func setupSessionOutput() {
+    guard !isSimulatorRunning else {
+      return
+    }
+
+    captureMetadataOutput = AVCaptureMetadataOutput()
+    captureSession.addOutput(captureMetadataOutput)
+    captureMetadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
+    captureMetadataOutput.metadataObjectTypes = metadata
+    videoPreviewLayer?.session = captureSession
+
+    view.setNeedsLayout()
+  }
+
+  private func setupBarcodeReader() {
     guard let captureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
-      print("Failed to get camera device")
       return
     }
 
     do {
       let input = try AVCaptureDeviceInput(device: captureDevice)
+      self.captureDevice = captureDevice
       captureSession.addInput(input)
 
       captureMetadataOutput = AVCaptureMetadataOutput()
@@ -64,10 +114,26 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
       captureSession.startRunning()
 
       // Initialize qr code frame to highlight qr code
-      addTransparentOverlayWithCirlce()
+      self.addFocusView()
     } catch {
-      print(error)
+      delegate?.cameraViewController(self, didReceiveError: error)
       return
+    }
+  }
+
+  private func setupCamera() {
+    permissionService.checkPersmission { [weak self] error in
+      guard let strongSelf = self else {
+        return
+      }
+
+      if error == nil {
+        strongSelf.setupBarcodeReader()
+        //strongSelf.setupSessionOutput()
+        strongSelf.delegate?.cameraViewControllerDidSetupCaptureSession(strongSelf)
+      } else {
+        strongSelf.delegate?.cameraViewController(strongSelf, didReceiveError: AlloyError.cameraAccessDenied)
+      }
     }
   }
 
@@ -86,18 +152,22 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
     )
     captureMetadataOutput.rectOfInterest = rectOfInterest
   }
+
+  func startCapturing() {
+    self.captureSession.startRunning()
+  }
+
+  func stopCapturing() {
+    self.captureSession.stopRunning()
+  }
 }
 
+// MARK: - AVCaptureMetadataOutputObjectsDelegate
 extension AlloyScannerViewController: AVCaptureMetadataOutputObjectsDelegate {
-  func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
-    captureSession.stopRunning()
-    // Check if the metadata array is not nil and it containts at least one object
-    if let metadataObject = metadataObjects.first {
-      guard let readableObject = metadataObject as? AVMetadataMachineReadableCodeObject else { return }
-      guard let stringValue = readableObject.stringValue else { return }
-      AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
-      print(stringValue)
-    }
+  public func metadataOutput(_ output: AVCaptureMetadataOutput,
+                             didOutput metadataObjects: [AVMetadataObject],
+                             from connection: AVCaptureConnection) {
+    delegate?.cameraViewController(self, didOutput: metadataObjects)
   }
 }
 
@@ -150,7 +220,7 @@ extension AlloyScannerViewController {
     return overlayView
   }
 
-  func addTransparentOverlayWithCirlce() {
+  func addFocusView() {
     self.focusView = createOverlay()
     if let focusView = self.focusView {
       view.addSubview(focusView)
@@ -178,26 +248,66 @@ extension AlloyScannerViewController {
     borderShapeLayer?.removeAllAnimations()
   }
 
-  private func startLoadingAnimation() {
-  }
-
   private func stopAnimations() {
     borderShapeLayer?.removeAllAnimations()
   }
 }
 
-enum BarCodeConstants {
-  enum BoundingBox {
-    static let horizontalPadding: CGFloat = 0.65
-    static let verticalPadding: CGFloat = 0.30
-    static let middle: CGFloat = 2.0
-    static let cornerSize: CGFloat = 5.0
-    static let borderWidth: CGFloat = 5.0
+// MARK: - Layout
+extension AlloyScannerViewController {
+  private func addFlashButton() {
+    self.view.addSubview(flashButton)
+
+    if #available(iOS 11.0, *) {
+      NSLayoutConstraint.activate([
+        flashButton.topAnchor.constraint(
+          equalTo: self.view.safeAreaLayoutGuide.topAnchor,
+          constant: 10
+        ),
+        flashButton.trailingAnchor.constraint(
+          equalTo: self.view.trailingAnchor,
+          constant: -16
+        )
+      ])
+    } else {
+      // Fallback on earlier versions
+    }
   }
 
-  enum ReadingAnimation {
-    static let fromValue: CGFloat = 0.0
-    static let toValue: CGFloat = 1.0
-    static let duration: TimeInterval = 0.8
+  private func addMultiScanHeader() {
+    let multiScanContainer = UIView()
+    multiScanContainer.translatesAutoresizingMaskIntoConstraints = false
+
+    // Text
+    let multiScanLabel = UILabel()
+    multiScanLabel.text = "Scan multiple assets"
+    multiScanLabel.textColor = .black
+
+    let multiScanSwitch = UISwitch()
+    multiScanSwitch.addTarget(self, action: #selector(multiScanChanged), for: .valueChanged)
+
+    let stackContainer = UIStackView(arrangedSubviews: [
+      multiScanLabel,
+      multiScanSwitch
+    ])
+    stackContainer.axis = .horizontal
+    stackContainer.distribution = .equalCentering
+    stackContainer.alignment = .center
+    stackContainer.backgroundColor = .white
+    stackContainer.isLayoutMarginsRelativeArrangement = true
+    stackContainer.layoutMargins = UIEdgeInsets(top: 5, left: 16, bottom: 5, right: 16)
+    stackContainer.translatesAutoresizingMaskIntoConstraints = false
+
+    self.view.addSubview(stackContainer)
+    if #available(iOS 11.0, *) {
+      NSLayoutConstraint.activate([
+        stackContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+        stackContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+        stackContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        stackContainer.heightAnchor.constraint(equalToConstant: 57)
+      ])
+    } else {
+      // Fallback on earlier versions
+    }
   }
 }
