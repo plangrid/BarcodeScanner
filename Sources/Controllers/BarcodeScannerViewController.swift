@@ -48,7 +48,7 @@ open class BarcodeScannerViewController: UIViewController {
   // MARK: - UI
 
   public private(set) var footerVC: FooterViewController = FooterViewController()
-  private(set) var cameraViewController: CameraControllerProtocol?
+  private(set) var cameraViewController: CameraControllerProtocol? = CameraViewController()
   public private(set) var cameraHeaderVC: CameraHeaderViewController = CameraHeaderViewController()
 
   // Constraints that are activated when the view is used as a footer.
@@ -68,17 +68,9 @@ open class BarcodeScannerViewController: UIViewController {
       changeStatus(from: oldValue, to: status)
     }
   }
-
-  // MARK: - Initializer
-  public init(
-    cameraController: CameraViewType? = .normal
-  ) {
-    super.init(nibName: nil, bundle: nil)
-    self.cameraViewController = cameraController?.controller
-  }
-
-  required public init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
+  
+  public func setCameraController(type: CameraViewType) {
+    self.cameraViewController = type.controller
   }
 
   // MARK: - View lifecycle
