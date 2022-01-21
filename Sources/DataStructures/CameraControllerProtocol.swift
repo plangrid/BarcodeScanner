@@ -22,14 +22,36 @@ protocol CameraControllerProtocol {
 /// Enum to handle camera controllers
 public enum CameraViewType {
   case normal
-  case alloy
+  case alloy(config: CameraViewConfigurationProtocol)
 
   var controller: CameraControllerProtocol {
     switch self {
     case .normal:
       return CameraViewController()
-    case .alloy:
-      return AlloyScannerViewController()
+    case let .alloy(configuration):
+      return AlloyScannerViewController(configuration: configuration)
     }
+  }
+}
+
+public protocol CameraViewConfigurationProtocol {
+  var focusViewStrokeColor: UIColor { get }
+  var multiScanTitle: String { get }
+  var descriptionText: String { get }
+}
+
+public struct CameraViewConfiguration: CameraViewConfigurationProtocol {
+  public var focusViewStrokeColor: UIColor
+  public var multiScanTitle: String
+  public var descriptionText: String
+
+  public init(
+    focusViewStrokeColor: UIColor = .white,
+    multiScanTitle: String,
+    descriptionText: String
+  ) {
+    self.focusViewStrokeColor = focusViewStrokeColor
+    self.multiScanTitle = multiScanTitle
+    self.descriptionText = descriptionText
   }
 }
