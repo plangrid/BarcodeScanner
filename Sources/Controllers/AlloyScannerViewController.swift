@@ -116,7 +116,10 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
       // Initialize qr code frame to highlight qr code
       self.addFocusView()
     } catch {
-      delegate?.cameraViewController(self, didReceiveError: error)
+      delegate?.cameraViewController(
+        self,
+        didReceiveError: error
+      )
       return
     }
   }
@@ -129,10 +132,12 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
 
       if error == nil {
         strongSelf.setupBarcodeReader()
-        //strongSelf.setupSessionOutput()
         strongSelf.delegate?.cameraViewControllerDidSetupCaptureSession(strongSelf)
       } else {
-        strongSelf.delegate?.cameraViewController(strongSelf, didReceiveError: AlloyError.cameraAccessDenied)
+        strongSelf.delegate?.cameraViewController(
+          strongSelf,
+          didReceiveError: AlloyError.cameraAccessDenied
+        )
       }
     }
   }
@@ -219,14 +224,6 @@ extension AlloyScannerViewController {
 
     return overlayView
   }
-
-  func addFocusView() {
-    self.focusView = createOverlay()
-    if let focusView = self.focusView {
-      view.addSubview(focusView)
-      self.view.bringSubviewToFront(focusView)
-    }
-  }
 }
 
 // MARK: - Bounding box Animations
@@ -255,6 +252,14 @@ extension AlloyScannerViewController {
 
 // MARK: - Layout
 extension AlloyScannerViewController {
+  func addFocusView() {
+    self.focusView = createOverlay()
+    if let focusView = self.focusView {
+      view.addSubview(focusView)
+      self.view.bringSubviewToFront(focusView)
+    }
+  }
+
   private func addFlashButton() {
     self.view.addSubview(flashButton)
 
