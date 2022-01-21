@@ -8,7 +8,7 @@
 
 import UIKit
 
-enum BarCodeConstants {
+enum AlloyScannerConstants {
   enum BoundingBox {
     static let horizontalPadding: CGFloat = 0.65
     static let verticalPadding: CGFloat = 0.30
@@ -27,5 +27,13 @@ enum BarCodeConstants {
     static let widthPercentage: CGFloat = 0.80
     static let heightPercentage: CGFloat = 0.20
     static let middle: CGFloat = 2.0
+  }
+
+  enum LayoutConstants {
+    static let multiScanViewTop: CGFloat = 44
+    static let multiScanViewHeight: CGFloat = 60
+    static let flashButtonTop: CGFloat = 10
+    static let flashButtonLeading: CGFloat = -16
+    static let viewHeightPercentage: CGFloat = 4.5
   }
 }

@@ -38,10 +38,21 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
   private var isMultiScanEnabled: Bool = false
 
   // MARK: - UI Properties
+  private let configuration: CameraViewConfigurationProtocol!
   private var focusView: UIView?
   private var borderShapeLayer: CAShapeLayer?
-  private var headerView: UIStackView?
-  private var multiScanView: UIView?
+
+  private lazy var multiScanView: UIStackView = {
+    let multiScanView = UIStackView()
+    multiScanView.axis = .horizontal
+    multiScanView.distribution = .equalCentering
+    multiScanView.alignment = .center
+    multiScanView.backgroundColor = .white
+    multiScanView.isLayoutMarginsRelativeArrangement = true
+    multiScanView.layoutMargins = UIEdgeInsets(top: 5, left: 16, bottom: 5, right: 16)
+    multiScanView.translatesAutoresizingMaskIntoConstraints = false
+    return multiScanView
+  }()
 
   private lazy var flashButton: UIButton = {
     let flashButton = UIButton(type: .custom)
@@ -57,7 +68,22 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
 
   @objc func multiScanChanged() {
     self.isMultiScanEnabled.toggle()
-    self.multiScanDelegate?.multiScanChanged(enabled: isMultiScanEnabled)
+    self.multiScanDelegate?.multiScanChanged(enabled: self.isMultiScanEnabled)
+  }
+
+  @objc func appWillEnterForeground() {
+    self.torchMode = .off
+    self.startReadingAnimation()
+  }
+
+  // MARK: - Initializer
+  init(configuration: CameraViewConfigurationProtocol) {
+    self.configuration = configuration
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
   }
 
   // MARK: - Lifecycle
@@ -65,8 +91,10 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
     super.viewDidLoad()
     self.setupCamera()
     self.torchMode = .off
-    self.addFlashButton()
     self.addMultiScanHeader()
+    self.addFlashButton()
+    self.addDescription()
+    self.handleForegroundMode()
   }
 
   override func viewDidAppear(_ animated: Bool) {
@@ -143,11 +171,13 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
   }
 
   private func setupRectOfInterest() {
+    typealias RectConstants = AlloyScannerConstants.RectOfInterest
+
     guard let videoPreview = self.videoPreviewLayer else { return }
-    let width = view.frame.width * 0.80
-    let height = view.frame.height * 0.20
-    let centerX = view.center.x - (width / 2)
-    let centerY = view.center.y - (height / 2)
+    let width = view.frame.width * RectConstants.widthPercentage
+    let height = view.frame.height * RectConstants.heightPercentage
+    let centerX = view.center.x - (width / RectConstants.middle)
+    let centerY = view.center.y - (height / RectConstants.middle)
     let rectOfInterest = videoPreview.metadataOutputRectConverted(
       fromLayerRect: CGRect(
         x: centerX,
@@ -165,6 +195,15 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
   func stopCapturing() {
     self.captureSession.stopRunning()
   }
+
+  private func handleForegroundMode() {
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(appWillEnterForeground),
+      name: UIApplication.willEnterForegroundNotification,
+      object: nil
+    )
+  }
 }
 
 // MARK: - AVCaptureMetadataOutputObjectsDelegate
@@ -178,7 +217,7 @@ extension AlloyScannerViewController: AVCaptureMetadataOutputObjectsDelegate {
 
 // MARK: - Overlay Bounding Box
 extension AlloyScannerViewController {
-  typealias Constants = BarCodeConstants.BoundingBox
+  typealias BoundingBoxConstants = AlloyScannerConstants.BoundingBox
 
   func createOverlay() -> UIView {
     // Create the view and add the blur
@@ -186,10 +225,10 @@ extension AlloyScannerViewController {
     overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.4)
 
     // Frame
-    let width = view.frame.width * Constants.horizontalPadding
-    let height = view.frame.height * Constants.verticalPadding
-    let centerX = view.center.x - (width / Constants.middle)
-    let centerY = view.center.y - (height / Constants.middle)
+    let width = view.frame.width * BoundingBoxConstants.horizontalPadding
+    let height = view.frame.height * BoundingBoxConstants.verticalPadding
+    let centerX = view.center.x - (width / BoundingBoxConstants.middle)
+    let centerY = view.center.y - (height / BoundingBoxConstants.middle)
 
     // Add rectangle that will be our rect of interest
     let path = CGMutablePath()
@@ -198,8 +237,8 @@ extension AlloyScannerViewController {
                  y: centerY,
                  width: width,
                  height: height),
-      cornerWidth: Constants.cornerSize,
-      cornerHeight: Constants.cornerSize)
+      cornerWidth: BoundingBoxConstants.cornerSize,
+      cornerHeight: BoundingBoxConstants.cornerSize)
     path.closeSubpath()
 
     // Add border to our rectangle
@@ -208,7 +247,7 @@ extension AlloyScannerViewController {
       return UIView()
     }
     borderShape.path = path
-    borderShape.lineWidth = Constants.borderWidth
+    borderShape.lineWidth = BoundingBoxConstants.borderWidth
     borderShape.strokeColor = UIColor.white.cgColor
     overlayView.layer.addSublayer(borderShape)
 
@@ -228,9 +267,10 @@ extension AlloyScannerViewController {
 
 // MARK: - Bounding box Animations
 extension AlloyScannerViewController {
-  typealias AnimationConstants = BarCodeConstants.ReadingAnimation
+  typealias AnimationConstants = AlloyScannerConstants.ReadingAnimation
 
   private func startReadingAnimation() {
+    borderShapeLayer?.removeAllAnimations()
     let animation = CABasicAnimation(keyPath: #keyPath(CALayer.opacity))
     animation.fromValue = AnimationConstants.fromValue
     animation.toValue = AnimationConstants.toValue
@@ -239,6 +279,8 @@ extension AlloyScannerViewController {
     animation.autoreverses = true
     animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
     borderShapeLayer?.add(animation, forKey: #keyPath(CALayer.opacity))
+
+    view.layoutIfNeeded()
   }
 
   private func stopReadingAnimation() {
@@ -252,6 +294,8 @@ extension AlloyScannerViewController {
 
 // MARK: - Layout
 extension AlloyScannerViewController {
+  typealias LayoutConstants = AlloyScannerConstants.LayoutConstants
+
   func addFocusView() {
     self.focusView = createOverlay()
     if let focusView = self.focusView {
@@ -263,20 +307,16 @@ extension AlloyScannerViewController {
   private func addFlashButton() {
     self.view.addSubview(flashButton)
 
-    if #available(iOS 11.0, *) {
-      NSLayoutConstraint.activate([
-        flashButton.topAnchor.constraint(
-          equalTo: self.view.safeAreaLayoutGuide.topAnchor,
-          constant: 10
-        ),
-        flashButton.trailingAnchor.constraint(
-          equalTo: self.view.trailingAnchor,
-          constant: -16
-        )
-      ])
-    } else {
-      // Fallback on earlier versions
-    }
+    NSLayoutConstraint.activate([
+      flashButton.topAnchor.constraint(
+        equalTo: self.multiScanView.bottomAnchor,
+        constant: LayoutConstants.flashButtonTop
+      ),
+      flashButton.trailingAnchor.constraint(
+        equalTo: self.view.trailingAnchor,
+        constant: LayoutConstants.flashButtonLeading
+      )
+    ])
   }
 
   private func addMultiScanHeader() {
@@ -285,34 +325,46 @@ extension AlloyScannerViewController {
 
     // Text
     let multiScanLabel = UILabel()
-    multiScanLabel.text = "Scan multiple assets"
+    multiScanLabel.attributedText = configuration.multiScanTitle
     multiScanLabel.textColor = .black
 
     let multiScanSwitch = UISwitch()
     multiScanSwitch.addTarget(self, action: #selector(multiScanChanged), for: .valueChanged)
 
-    let stackContainer = UIStackView(arrangedSubviews: [
-      multiScanLabel,
-      multiScanSwitch
-    ])
-    stackContainer.axis = .horizontal
-    stackContainer.distribution = .equalCentering
-    stackContainer.alignment = .center
-    stackContainer.backgroundColor = .white
-    stackContainer.isLayoutMarginsRelativeArrangement = true
-    stackContainer.layoutMargins = UIEdgeInsets(top: 5, left: 16, bottom: 5, right: 16)
-    stackContainer.translatesAutoresizingMaskIntoConstraints = false
+    multiScanView.addArrangedSubview(multiScanLabel)
+    multiScanView.addArrangedSubview(multiScanSwitch)
 
-    self.view.addSubview(stackContainer)
+    self.view.addSubview(multiScanView)
     if #available(iOS 11.0, *) {
       NSLayoutConstraint.activate([
-        stackContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-        stackContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-        stackContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        stackContainer.heightAnchor.constraint(equalToConstant: 57)
+        multiScanView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
       ])
     } else {
-      // Fallback on earlier versions
+      NSLayoutConstraint.activate([
+        multiScanView.topAnchor.constraint(equalTo: view.topAnchor, constant: LayoutConstants.multiScanViewTop)
+      ])
     }
+
+    NSLayoutConstraint.activate([
+      multiScanView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      multiScanView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      multiScanView.heightAnchor.constraint(equalToConstant: LayoutConstants.multiScanViewHeight)
+    ])
+  }
+
+  private func addDescription() {
+    let descriptionLabel = UILabel()
+    descriptionLabel.attributedText = configuration.descriptionText
+    descriptionLabel.textColor = .white
+    descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+
+    guard let focusView = self.focusView else { return }
+    self.view.addSubview(descriptionLabel)
+    self.view.bringSubviewToFront(descriptionLabel)
+
+    NSLayoutConstraint.activate([
+      descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      descriptionLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -(focusView.frame.height / LayoutConstants.viewHeightPercentage))
+    ])
   }
 }
