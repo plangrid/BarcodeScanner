@@ -47,19 +47,19 @@ open class BarcodeScannerViewController: UIViewController {
 
   // MARK: - UI
 
-  public private(set) var footerVC: FooterViewController?
+  public private(set) var footerVC: FooterViewController = FooterViewController()
   private(set) var cameraViewController: CameraControllerProtocol?
-  public private(set) var cameraHeaderVC: CameraHeaderViewController?
+  public private(set) var cameraHeaderVC: CameraHeaderViewController = CameraHeaderViewController()
 
   // Constraints that are activated when the view is used as a footer.
   private lazy var collapsedConstraints: [NSLayoutConstraint] = self.makeCollapsedConstraints()
 
   private var footerView: UIView {
-    return footerVC?.view ?? UIView()
+    return footerVC.view
   }
 
   private var headerView: UIView {
-    return cameraHeaderVC?.view ?? UIView()
+    return cameraHeaderVC.view
   }
 
   /// The current controller's status mode.
@@ -71,14 +71,10 @@ open class BarcodeScannerViewController: UIViewController {
 
   // MARK: - Initializer
   public init(
-    footerController: FooterViewController? = FooterViewController(),
-    cameraController: CameraViewType? = .normal,
-    headerController: CameraHeaderViewController? = CameraHeaderViewController()
+    cameraController: CameraViewType? = .normal
   ) {
     super.init(nibName: nil, bundle: nil)
-    self.footerVC = footerController
     self.cameraViewController = cameraController?.controller
-    self.cameraHeaderVC = headerController
   }
 
   required public init?(coder: NSCoder) {
@@ -98,7 +94,7 @@ open class BarcodeScannerViewController: UIViewController {
     self.addFooterIfNeeded()
     self.setupCameraConstraints()
 
-    guard footerVC != nil && cameraHeaderVC != nil else { return }
+    //guard footerVC != nil && cameraHeaderVC != nil else { return }
     collapsedConstraints.activate()
   }
 
@@ -174,15 +170,13 @@ open class BarcodeScannerViewController: UIViewController {
   }
 
   private func addHeaderIfNeeded() {
-    guard let header = self.cameraHeaderVC else { return }
-    add(childViewController: header)
+    add(childViewController: cameraHeaderVC)
     headerView.translatesAutoresizingMaskIntoConstraints = false
     view.bringSubviewToFront(headerView)
   }
 
   private func addFooterIfNeeded() {
-    guard let footer = self.footerVC else { return }
-    add(childViewController: footer)
+    add(childViewController: footerVC)
     footerView.translatesAutoresizingMaskIntoConstraints = false
     view.bringSubviewToFront(footerView)
   }
@@ -224,14 +218,17 @@ private extension BarcodeScannerViewController {
 
     guard let cameraView = (cameraViewController as? UIViewController)?.view else { return }
     cameraViewController?.multiScanDelegate = self
-    let isFooterAvailable = self.footerVC != nil
-    let isHeaderAvailable = self.cameraHeaderVC != nil
+//    let isFooterAvailable = self.footerVC != nil
+//    let isHeaderAvailable = self.cameraHeaderVC != nil
 
     NSLayoutConstraint.activate(
       cameraView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       cameraView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-      cameraView.bottomAnchor.constraint(equalTo: isFooterAvailable ? footerView.bottomAnchor : view.bottomAnchor),
-      cameraView.topAnchor.constraint(equalTo: isHeaderAvailable ? headerView.topAnchor : view.topAnchor)
+      cameraView.bottomAnchor.constraint(equalTo: footerView.bottomAnchor),
+      cameraView.topAnchor.constraint(equalTo: headerView.topAnchor)
+
+      //cameraView.bottomAnchor.constraint(equalTo: isFooterAvailable ? footerView.bottomAnchor : view.bottomAnchor),
+      //cameraView.topAnchor.constraint(equalTo: isHeaderAvailable ? headerView.topAnchor : view.topAnchor)
     )
   }
 
