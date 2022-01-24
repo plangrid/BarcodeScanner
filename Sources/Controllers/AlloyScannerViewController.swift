@@ -95,6 +95,7 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
     self.addFlashButton()
     self.addDescription()
     self.handleForegroundMode()
+    self.setMultiScanMode()
   }
 
   override func viewDidAppear(_ animated: Bool) {
@@ -204,6 +205,11 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
       object: nil
     )
   }
+
+  private func setMultiScanMode() {
+    self.isMultiScanEnabled = configuration.isMultiScanEnabled
+    self.multiScanDelegate?.multiScanChanged(enabled: configuration.isMultiScanEnabled)
+  }
 }
 
 // MARK: - AVCaptureMetadataOutputObjectsDelegate
@@ -248,7 +254,7 @@ extension AlloyScannerViewController {
     }
     borderShape.path = path
     borderShape.lineWidth = BoundingBoxConstants.borderWidth
-    borderShape.strokeColor = UIColor.white.cgColor
+    borderShape.strokeColor = self.configuration.focusViewStrokeColor.cgColor
     overlayView.layer.addSublayer(borderShape)
 
     path.addRect(CGRect(origin: .zero, size: overlayView.frame.size))
@@ -330,6 +336,7 @@ extension AlloyScannerViewController {
 
     let multiScanSwitch = UISwitch()
     multiScanSwitch.addTarget(self, action: #selector(multiScanChanged), for: .valueChanged)
+    multiScanSwitch.isOn = configuration.isMultiScanEnabled
 
     multiScanView.addArrangedSubview(multiScanLabel)
     multiScanView.addArrangedSubview(multiScanSwitch)
