@@ -68,7 +68,7 @@ open class BarcodeScannerViewController: UIViewController {
       changeStatus(from: oldValue, to: status)
     }
   }
-  
+
   public func setCameraController(type: CameraViewType) {
     self.cameraViewController = type.controller
   }
@@ -254,7 +254,7 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
 
   func cameraViewControllerDidTapSettingsButton(_ controller: CameraControllerProtocol) {
     DispatchQueue.main.async {
-        if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+      if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
         UIApplication.shared.openURL(settingsURL)
       }
     }
@@ -294,6 +294,7 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
   }
 }
 
+// MARK: - MultiScanProtocol
 extension BarcodeScannerViewController: MultiScanProtocol {
   func multiScanChanged(enabled: Bool) {
     self.isMultiScanEnabled = enabled

@@ -38,7 +38,7 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
   private var isMultiScanEnabled: Bool = false
 
   // MARK: - UI Properties
-  private let configuration: CameraViewConfigurationProtocol!
+  private let configuration: CameraViewConfigurationProtocol
   private var focusView: UIView?
   private var borderShapeLayer: CAShapeLayer?
 
@@ -119,9 +119,7 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
   }
 
   private func setupBarcodeReader() {
-    guard let captureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
-      return
-    }
+    guard let captureDevice = AVCaptureDevice.default(for: .video) else { return }
 
     do {
       let input = try AVCaptureDeviceInput(device: captureDevice)
@@ -371,7 +369,10 @@ extension AlloyScannerViewController {
 
     NSLayoutConstraint.activate([
       descriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      descriptionLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -(focusView.frame.height / LayoutConstants.viewHeightPercentage))
+      descriptionLabel.centerYAnchor.constraint(
+        equalTo: view.centerYAnchor,
+        constant: -(focusView.frame.height / LayoutConstants.viewHeightPercentage)
+      )
     ])
   }
 }

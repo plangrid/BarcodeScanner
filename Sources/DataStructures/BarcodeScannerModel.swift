@@ -30,7 +30,8 @@ public protocol BarcodeScannerDismissalDelegate: AnyObject {
 
 // MARK: - Error types
 public enum BarcodeScannerError: Error {
-  /// Error when something besides a MachineReadableCodeObject was detected. (Check AVMetadataObject.ObjectType documentation)
+  /// Error when something besides a MachineReadableCodeObject was
+  /// detected. (Check AVMetadataObject.ObjectType documentation)
   case nonMachineReadableCodeDetected
   /// Error describing an unexpected/general error
   case unexpected(Error)

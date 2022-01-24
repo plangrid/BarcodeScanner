@@ -2,7 +2,7 @@ import UIKit
 import AVFoundation
 
 /// Delegate to handle camera setup and video capturing.
-protocol CameraViewControllerDelegate: class {
+protocol CameraViewControllerDelegate: AnyObject {
   func cameraViewControllerDidSetupCaptureSession(_ controller: CameraControllerProtocol)
   func cameraViewControllerDidFailToSetupCaptureSession(_ controller: CameraControllerProtocol)
   func cameraViewController(_ controller: CameraControllerProtocol, didReceiveError error: Error)
@@ -83,7 +83,6 @@ public final class CameraViewController: UIViewController, CameraControllerProto
 
   deinit {
     stopCapturing()
-    NotificationCenter.default.removeObserver(self)
   }
 
   // MARK: - View lifecycle
