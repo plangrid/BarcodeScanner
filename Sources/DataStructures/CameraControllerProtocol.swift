@@ -36,21 +36,25 @@ public enum CameraViewType {
 
 public protocol CameraViewConfigurationProtocol {
   var focusViewStrokeColor: UIColor { get }
+  var isMultiScanEnabled: Bool { get }
   var multiScanTitle: NSAttributedString { get }
   var descriptionText: NSAttributedString { get }
 }
 
 public struct CameraViewConfiguration: CameraViewConfigurationProtocol {
   public var focusViewStrokeColor: UIColor
+  public var isMultiScanEnabled: Bool
   public var multiScanTitle: NSAttributedString
   public var descriptionText: NSAttributedString
 
   public init(
     focusViewStrokeColor: UIColor = .white,
+    isMultiScanEnabled: Bool = false,
     multiScanTitle: NSAttributedString,
     descriptionText: NSAttributedString
   ) {
     self.focusViewStrokeColor = focusViewStrokeColor
+    self.isMultiScanEnabled = isMultiScanEnabled
     self.multiScanTitle = multiScanTitle
     self.descriptionText = descriptionText
   }
