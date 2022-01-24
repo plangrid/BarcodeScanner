@@ -86,7 +86,6 @@ open class BarcodeScannerViewController: UIViewController {
     self.addFooterIfNeeded()
     self.setupCameraConstraints()
 
-    //guard footerVC != nil && cameraHeaderVC != nil else { return }
     collapsedConstraints.activate()
   }
 
@@ -158,6 +157,7 @@ open class BarcodeScannerViewController: UIViewController {
     guard let cameraViewController = cameraViewController as? UIViewController else { return }
     self.cameraViewController?.metadata = metadata
     self.cameraViewController?.delegate = self
+    self.cameraViewController?.multiScanDelegate = self
     add(childViewController: cameraViewController)
   }
 
@@ -209,18 +209,12 @@ private extension BarcodeScannerViewController {
     constraintsActivated = true
 
     guard let cameraView = (cameraViewController as? UIViewController)?.view else { return }
-    cameraViewController?.multiScanDelegate = self
-//    let isFooterAvailable = self.footerVC != nil
-//    let isHeaderAvailable = self.cameraHeaderVC != nil
 
     NSLayoutConstraint.activate(
       cameraView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       cameraView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       cameraView.bottomAnchor.constraint(equalTo: footerView.bottomAnchor),
       cameraView.topAnchor.constraint(equalTo: headerView.topAnchor)
-
-      //cameraView.bottomAnchor.constraint(equalTo: isFooterAvailable ? footerView.bottomAnchor : view.bottomAnchor),
-      //cameraView.topAnchor.constraint(equalTo: isHeaderAvailable ? headerView.topAnchor : view.topAnchor)
     )
   }
 
