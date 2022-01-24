@@ -79,8 +79,6 @@ open class BarcodeScannerViewController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = UIColor.black
 
-    view.backgroundColor = UIColor.black
-
     self.setupCameraController()
     self.addHeaderIfNeeded()
     self.addFooterIfNeeded()
