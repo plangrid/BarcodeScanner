@@ -21,7 +21,10 @@ protocol CameraControllerProtocol {
 
 /// Enum to handle camera controllers
 public enum CameraViewType {
+  /// This type is used for the old CameraViewController and it's the default value
   case normal
+  /// This type is used for the camera UI defined for alloy
+  /// - Parameter config: A protocol used to configure the view
   case alloy(config: CameraViewConfigurationProtocol)
 
   var controller: CameraControllerProtocol {
