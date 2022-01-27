@@ -2,20 +2,21 @@ import UIKit
 import AVFoundation
 
 /// Delegate to handle camera setup and video capturing.
-protocol CameraViewControllerDelegate: class {
-  func cameraViewControllerDidSetupCaptureSession(_ controller: CameraViewController)
-  func cameraViewControllerDidFailToSetupCaptureSession(_ controller: CameraViewController)
-  func cameraViewController(_ controller: CameraViewController, didReceiveError error: Error)
-  func cameraViewControllerDidTapSettingsButton(_ controller: CameraViewController)
+protocol CameraViewControllerDelegate: AnyObject {
+  func cameraViewControllerDidSetupCaptureSession(_ controller: CameraControllerProtocol)
+  func cameraViewControllerDidFailToSetupCaptureSession(_ controller: CameraControllerProtocol)
+  func cameraViewController(_ controller: CameraControllerProtocol, didReceiveError error: Error)
+  func cameraViewControllerDidTapSettingsButton(_ controller: CameraControllerProtocol)
   func cameraViewController(
-    _ controller: CameraViewController,
+    _ controller: CameraControllerProtocol,
     didOutput metadataObjects: [AVMetadataObject]
   )
 }
 
 /// View controller responsible for camera controls and video capturing.
-public final class CameraViewController: UIViewController {
+public final class CameraViewController: UIViewController, CameraControllerProtocol {
   weak var delegate: CameraViewControllerDelegate?
+  weak var multiScanDelegate: MultiScanProtocol?
 
   /// Focus view type.
   public var barCodeFocusViewType: FocusViewType = .animated
@@ -82,7 +83,6 @@ public final class CameraViewController: UIViewController {
 
   deinit {
     stopCapturing()
-    NotificationCenter.default.removeObserver(self)
   }
 
   // MARK: - View lifecycle
