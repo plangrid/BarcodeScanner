@@ -22,16 +22,16 @@ open class BarcodeScannerViewController: UIViewController {
   public weak var errorDelegate: BarcodeScannerErrorDelegate?
   /// Delegate to dismiss barcode scanner when the close button has been pressed.
   public weak var dismissalDelegate: BarcodeScannerDismissalDelegate?
-
   /// Stop scanning when other object besides a MachineReadableCodeObject is detected
   public var stopCaptureWhenDetectingOtherObject = true
-
   /// `AVCaptureMetadataOutput` metadata object types.
   public var metadata = AVMetadataObject.ObjectType.barcodeScannerMetadata {
     didSet {
       cameraViewController?.metadata = metadata
     }
   }
+  /// ` MultiScanProtocol` property that enable or disable multiscanning mode
+  public var isMultiScanEnabled: Bool = false
 
   // MARK: - Private properties
 
@@ -41,9 +41,6 @@ open class BarcodeScannerViewController: UIViewController {
   private var constraintsActivated = false
   /// Flag to check if view controller is currently on screen
   private var isVisible = false
-
-  // MARK: - MultiScan Properties
-  var isMultiScanEnabled: Bool = true
 
   // MARK: - UI
 
@@ -71,6 +68,9 @@ open class BarcodeScannerViewController: UIViewController {
 
   public func setCameraController(type: CameraViewType) {
     self.cameraViewController = type.controller
+    let isAlloyController = self.cameraViewController is AlloyScannerViewController
+    self.headerView.isHidden = isAlloyController
+    self.footerView.isHidden = isAlloyController
   }
 
   // MARK: - View lifecycle
