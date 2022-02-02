@@ -90,18 +90,21 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
   override func viewDidLoad() {
     super.viewDidLoad()
     self.setupCamera()
-    self.torchMode = .off
-    self.addMultiScanHeader()
-    self.addFlashButton()
-    self.addDescription()
-    self.handleForegroundMode()
-    self.setMultiScanMode()
   }
 
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     self.startReadingAnimation()
     self.setupRectOfInterest()
+  }
+
+  private func setupView() {
+    self.torchMode = .off
+    self.addMultiScanHeaderIfNeeded()
+    self.addFlashButtonIfNeeded()
+    self.addDescription()
+    self.handleForegroundMode()
+    self.startReadingAnimation()
   }
 
   private func setupSessionOutput() {
@@ -159,6 +162,7 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
 
       if error == nil {
         strongSelf.setupBarcodeReader()
+        strongSelf.setupView()
         strongSelf.delegate?.cameraViewControllerDidSetupCaptureSession(strongSelf)
       } else {
         strongSelf.delegate?.cameraViewController(
@@ -202,11 +206,6 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
       name: UIApplication.willEnterForegroundNotification,
       object: nil
     )
-  }
-
-  private func setMultiScanMode() {
-    self.isMultiScanEnabled = configuration.isMultiScanEnabled
-    self.multiScanDelegate?.multiScanChanged(enabled: configuration.isMultiScanEnabled)
   }
 }
 
@@ -308,14 +307,27 @@ extension AlloyScannerViewController {
     }
   }
 
-  private func addFlashButton() {
+  private func addFlashButtonIfNeeded() {
+    guard configuration.isTorchModeAvailable else { return }
     self.view.addSubview(flashButton)
 
+    if #available(iOS 11.0, *), !configuration.isMultiScanningAvailable {
+      NSLayoutConstraint.activate([
+        flashButton.topAnchor.constraint(
+          equalTo: view.safeAreaLayoutGuide.topAnchor,
+          constant: LayoutConstants.flashButtonTop
+        )
+      ])
+    } else {
+      NSLayoutConstraint.activate([
+        flashButton.topAnchor.constraint(
+          equalTo: multiScanView.bottomAnchor,
+          constant: LayoutConstants.flashButtonTop
+        )
+      ])
+    }
+
     NSLayoutConstraint.activate([
-      flashButton.topAnchor.constraint(
-        equalTo: self.multiScanView.bottomAnchor,
-        constant: LayoutConstants.flashButtonTop
-      ),
       flashButton.trailingAnchor.constraint(
         equalTo: self.view.trailingAnchor,
         constant: LayoutConstants.flashButtonLeading
@@ -323,7 +335,8 @@ extension AlloyScannerViewController {
     ])
   }
 
-  private func addMultiScanHeader() {
+  private func addMultiScanHeaderIfNeeded() {
+    guard configuration.isMultiScanningAvailable else { return }
     let multiScanContainer = UIView()
     multiScanContainer.translatesAutoresizingMaskIntoConstraints = false
 
@@ -334,7 +347,6 @@ extension AlloyScannerViewController {
 
     let multiScanSwitch = UISwitch()
     multiScanSwitch.addTarget(self, action: #selector(multiScanChanged), for: .valueChanged)
-    multiScanSwitch.isOn = configuration.isMultiScanEnabled
 
     multiScanView.addArrangedSubview(multiScanLabel)
     multiScanView.addArrangedSubview(multiScanSwitch)

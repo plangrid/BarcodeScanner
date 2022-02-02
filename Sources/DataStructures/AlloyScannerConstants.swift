@@ -34,6 +34,6 @@ enum AlloyScannerConstants {
     static let multiScanViewHeight: CGFloat = 60
     static let flashButtonTop: CGFloat = 10
     static let flashButtonLeading: CGFloat = -16
-    static let viewHeightPercentage: CGFloat = 4.5
+    static let viewHeightPercentage: CGFloat = 4.8
   }
 }
