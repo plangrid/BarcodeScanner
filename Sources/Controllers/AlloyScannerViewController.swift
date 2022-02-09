@@ -36,6 +36,7 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
     }
   }
   private var isMultiScanEnabled: Bool = false
+  private var dashedView: DashedView?
 
   // MARK: - UI Properties
   private let configuration: CameraViewConfigurationProtocol
@@ -61,6 +62,20 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
     return flashButton
   }()
 
+  private lazy var findItemButton: UIButton = {
+    let button = UIButton(type: .custom)
+    button.frame = .zero
+    button.setImage(UIImage(named: "findItem"), for: .normal)
+    button.setTitle("Find Item", for: .normal)
+    button.titleLabel?.font = .systemFont(ofSize: 20)
+    button.backgroundColor = .blue
+    button.titleLabel?.textColor = .white
+    button.layer.cornerRadius = 8
+    //button.translatesAutoresizingMaskIntoConstraints = false
+    button.addTarget(self, action: #selector(willTappedFindItem), for: .touchUpInside)
+    return button
+  }()
+
   // MARK: - Actions
   @objc func flashButtonTapped() {
     torchMode = torchMode.next
@@ -74,6 +89,10 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
   @objc func appWillEnterForeground() {
     self.torchMode = .off
     self.startReadingAnimation()
+  }
+
+  @objc func willTappedFindItem() {
+    //self.delegate?.cameraViewController(self, didOutput: <#T##[AVMetadataObject]#>)
   }
 
   // MARK: - Initializer
@@ -105,6 +124,13 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
     self.addDescription()
     self.handleForegroundMode()
     self.startReadingAnimation()
+    self.drawFindButton()
+    dashedView = DashedView()
+
+    if let dashedView = dashedView {
+      self.view.addSubview(dashedView)
+      self.view.bringSubviewToFront(dashedView)
+    }
   }
 
   private func setupSessionOutput() {
@@ -174,21 +200,21 @@ class AlloyScannerViewController: UIViewController, CameraControllerProtocol {
   }
 
   private func setupRectOfInterest() {
-    typealias RectConstants = AlloyScannerConstants.RectOfInterest
-
-    guard let videoPreview = self.videoPreviewLayer else { return }
-    let width = view.frame.width * RectConstants.widthPercentage
-    let height = view.frame.height * RectConstants.heightPercentage
-    let centerX = view.center.x - (width / RectConstants.middle)
-    let centerY = view.center.y - (height / RectConstants.middle)
-    let rectOfInterest = videoPreview.metadataOutputRectConverted(
-      fromLayerRect: CGRect(
-        x: centerX,
-        y: centerY,
-        width: width,
-        height: height)
-    )
-    captureMetadataOutput.rectOfInterest = rectOfInterest
+//    typealias RectConstants = AlloyScannerConstants.RectOfInterest
+//
+//    guard let videoPreview = self.videoPreviewLayer else { return }
+//    let width = view.frame.width * RectConstants.widthPercentage
+//    let height = view.frame.height * RectConstants.heightPercentage
+//    let centerX = view.center.x - (width / RectConstants.middle)
+//    let centerY = view.center.y - (height / RectConstants.middle)
+//    let rectOfInterest = videoPreview.metadataOutputRectConverted(
+//      fromLayerRect: CGRect(
+//        x: centerX,
+//        y: centerY,
+//        width: width,
+//        height: height)
+//    )
+//    captureMetadataOutput.rectOfInterest = rectOfInterest
   }
 
   func startCapturing() {
@@ -214,7 +240,19 @@ extension AlloyScannerViewController: AVCaptureMetadataOutputObjectsDelegate {
   public func metadataOutput(_ output: AVCaptureMetadataOutput,
                              didOutput metadataObjects: [AVMetadataObject],
                              from connection: AVCaptureConnection) {
-    delegate?.cameraViewController(self, didOutput: metadataObjects)
+    if metadataObjects.isEmpty {
+      dashedView?.frame = .zero
+      findItemButton.isHidden = true
+      return
+    }
+
+    guard let metadataObject = metadataObjects.first as? AVMetadataMachineReadableCodeObject else {
+      return
+    }
+
+    guard let barCodeObject = videoPreviewLayer?.transformedMetadataObject(for: metadataObject) else { return }
+    drawOutlinedView(onBounds: barCodeObject.bounds)
+    //delegate?.cameraViewController(self, didOutput: metadataObjects)
   }
 }
 
@@ -386,5 +424,104 @@ extension AlloyScannerViewController {
         constant: -(focusView.frame.height / LayoutConstants.viewHeightPercentage)
       )
     ])
+  }
+
+  private func drawOutlinedView(onBounds bounds: CGRect) {
+    if isInsideFocusView(bounds: bounds) {
+      dashedView?.drawAsGreen()
+      dashedView?.frame = bounds
+      findItemButton.isHidden = false
+    } else {
+      dashedView?.drawAsYellow()
+      dashedView?.frame = bounds
+       findItemButton.isHidden = true
+    }
+  }
+
+  private func drawFindButton() {
+    guard let focusView = self.focusView else { return }
+    //findItemButton.translatesAutoresizingMaskIntoConstraints = false
+    self.view.addSubview(findItemButton)
+    self.view.bringSubviewToFront(findItemButton)
+
+//     NSLayoutConstraint.activate([
+//      findItemButton.topAnchor.constraint(equalTo: focusView.bottomAnchor, constant: 50),
+//      findItemButton.widthAnchor.constraint(equalTo: focusView.widthAnchor),
+//      findItemButton.centerXAnchor.constraint(equalTo: focusView.centerXAnchor),
+//      findItemButton.heightAnchor.constraint(equalToConstant: 32)
+//     ])
+
+    findItemButton.frame = CGRect(x: view.center.x - 100, y: 150, width: 200, height: 30)
+    findItemButton.isHidden = true
+    //view.layoutIfNeeded()
+  }
+
+  private func isInsideFocusView(bounds: CGRect) -> Bool {
+    typealias RectConstants = AlloyScannerConstants.RectOfInterest
+
+    let width = view.frame.width * 0.65//RectConstants.widthPercentage
+    let height = view.frame.height * 0.30//RectConstants.heightPercentage
+    let centerX = view.center.x - (width / RectConstants.middle)
+    let centerY = view.center.y - (height / RectConstants.middle)
+
+    let rectConverted = CGRect(x: centerX, y: centerY, width: width, height: height)
+    return rectConverted.contains(bounds)
+  }
+}
+
+protocol DashedViewConfigurationProtocol {
+  var cornerRadius: CGFloat { get }
+  var dashWidth: CGFloat { get }
+  var dashColor: UIColor { get }
+  var dashLenght: CGFloat { get }
+  var dashesSpace: CGFloat { get }
+}
+
+struct DashedViewConfiguration: DashedViewConfigurationProtocol {
+  var cornerRadius: CGFloat = 5
+  var dashWidth: CGFloat = 3
+  var dashColor: UIColor = UIColor.yellow
+  var dashLenght: CGFloat = 3
+  var dashesSpace: CGFloat = 4
+}
+
+class DashedView: UIView {
+
+  let shapeLayer = CAShapeLayer()
+
+  override init(frame: CGRect) {
+    super.init(frame: frame)
+    commonInit()
+  }
+  required init?(coder: NSCoder) {
+    super.init(coder: coder)
+    commonInit()
+  }
+
+  func commonInit() {
+    layer.addSublayer(shapeLayer)
+  }
+
+  func drawAsGreen() {
+    shapeLayer.fillColor = UIColor.clear.cgColor
+    shapeLayer.strokeColor = UIColor.green.cgColor
+    shapeLayer.lineWidth = 3
+    shapeLayer.lineJoin = .round
+    self.setNeedsDisplay()
+  }
+
+  func drawAsYellow() {
+    let color = UIColor.yellow.cgColor
+    shapeLayer.fillColor = UIColor.clear.cgColor
+    shapeLayer.strokeColor = color
+    shapeLayer.lineWidth = 2
+    shapeLayer.lineJoin = .round
+    shapeLayer.lineDashPattern = [6,3]
+    self.setNeedsDisplay()
+  }
+
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    shapeLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 4).cgPath
   }
 }

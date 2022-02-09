@@ -15,6 +15,7 @@
 		0A2EEB0227988B270073833E /* BarcodeScannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEB0127988B270073833E /* BarcodeScannerModel.swift */; };
 		0A2EEB0427988B720073833E /* CameraControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEB0327988B720073833E /* CameraControllerProtocol.swift */; };
 		0A2EEB0627988C440073833E /* AlloyScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEB0527988C440073833E /* AlloyScannerViewController.swift */; };
+		0A8445E827B2DA4E00D746A8 /* findItem.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A8445E727B2DA4E00D746A8 /* findItem.png */; };
 		2DBF9E0E1F169DEF006B5AA8 /* FocusViewType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBF9E0D1F169DEF006B5AA8 /* FocusViewType.swift */; };
 		D504555F1FD8714700E46826 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504555E1FD8714700E46826 /* UIView+Extensions.swift */; };
 		D50BE3E91C9FE7A80000A34C /* flashOff@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D50BE3E51C9FE7A80000A34C /* flashOff@3x.png */; };
@@ -41,6 +42,7 @@
 		0A2EEB0127988B270073833E /* BarcodeScannerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarcodeScannerModel.swift; sourceTree = "<group>"; };
 		0A2EEB0327988B720073833E /* CameraControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraControllerProtocol.swift; sourceTree = "<group>"; };
 		0A2EEB0527988C440073833E /* AlloyScannerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlloyScannerViewController.swift; sourceTree = "<group>"; };
+		0A8445E727B2DA4E00D746A8 /* findItem.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = findItem.png; sourceTree = "<group>"; };
 		2DBF9E0D1F169DEF006B5AA8 /* FocusViewType.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = FocusViewType.swift; sourceTree = "<group>"; tabWidth = 2; };
 		D504555E1FD8714700E46826 /* UIView+Extensions.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; tabWidth = 2; };
 		D50BE3E51C9FE7A80000A34C /* flashOff@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flashOff@3x.png"; sourceTree = "<group>"; };
@@ -75,6 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				D5349DF7201E42D900CD53EA /* cameraRotate@3x.png */,
+				0A8445E727B2DA4E00D746A8 /* findItem.png */,
 				D50BE3E51C9FE7A80000A34C /* flashOff@3x.png */,
 				D50BE3E61C9FE7A80000A34C /* flashOn@3x.png */,
 				00B6670B230DC61200ABA25C /* barcode@3x.png */,
@@ -241,6 +244,7 @@
 				D50BE3EB1C9FE7A80000A34C /* info@3x.png in Resources */,
 				00B66712230E5BDD00ABA25C /* qrcode@3x.png in Resources */,
 				00B6670C230DC61200ABA25C /* barcode@3x.png in Resources */,
+				0A8445E827B2DA4E00D746A8 /* findItem.png in Resources */,
 				D50BE3EA1C9FE7A80000A34C /* flashOn@3x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

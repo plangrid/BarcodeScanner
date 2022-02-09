@@ -274,7 +274,7 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
 
     guard var code = metadataObj.stringValue, metadata.contains(metadataObj.type) else {
       errorDelegate?.scanner(self, didReceiveError: .unsupported)
-      if !isMultiScanEnabled { controller.stopCapturing() }
+      controller.stopCapturing()
       return
     }
 
