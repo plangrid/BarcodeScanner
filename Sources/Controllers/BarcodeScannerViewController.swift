@@ -288,7 +288,9 @@ extension BarcodeScannerViewController: CameraViewControllerDelegate {
     }
 
     codeDelegate?.scanner(self, didCaptureCode: code, type: rawType)
-    animateFlash()
+    if !isMultiScanEnabled {
+      animateFlash()
+    }
   }
 }
 
