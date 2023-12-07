@@ -133,10 +133,16 @@ public final class CameraViewController: UIViewController, CameraControllerProto
     }
 
     torchMode = .off
-    captureSession.startRunning()
-    focusView.isHidden = false
-    flashButton.isHidden = captureDevice?.position == .front
-    cameraButton.isHidden = !showsCameraButton
+    DispatchQueue.global().async { [weak self] in
+        self?.captureSession.startRunning()
+    }
+    DispatchQueue.main.async { [weak self] in
+        guard let self = self else { return }
+        self.focusView.isHidden = false
+        self.flashButton.isHidden = self.captureDevice?.position == .front
+        self.cameraButton.isHidden = !self.showsCameraButton
+    }
+
   }
 
   func stopCapturing() {
