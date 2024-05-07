@@ -9,18 +9,12 @@
 /* Begin PBXBuildFile section */
 		00B666F5230D390900ABA25C /* FooterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B666F4230D390800ABA25C /* FooterViewController.swift */; };
 		00B666FF230D44A900ABA25C /* CameraHeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B666FE230D44A900ABA25C /* CameraHeaderViewController.swift */; };
-		00B6670C230DC61200ABA25C /* barcode@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00B6670B230DC61200ABA25C /* barcode@3x.png */; };
-		00B66712230E5BDD00ABA25C /* qrcode@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00B66711230E5BDD00ABA25C /* qrcode@3x.png */; };
 		0A03879C279A1ED2009AA963 /* AlloyScannerConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03879B279A1ED2009AA963 /* AlloyScannerConstants.swift */; };
 		0A2EEB0227988B270073833E /* BarcodeScannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEB0127988B270073833E /* BarcodeScannerModel.swift */; };
 		0A2EEB0427988B720073833E /* CameraControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEB0327988B720073833E /* CameraControllerProtocol.swift */; };
 		0A2EEB0627988C440073833E /* AlloyScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EEB0527988C440073833E /* AlloyScannerViewController.swift */; };
 		2DBF9E0E1F169DEF006B5AA8 /* FocusViewType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBF9E0D1F169DEF006B5AA8 /* FocusViewType.swift */; };
 		D504555F1FD8714700E46826 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504555E1FD8714700E46826 /* UIView+Extensions.swift */; };
-		D50BE3E91C9FE7A80000A34C /* flashOff@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D50BE3E51C9FE7A80000A34C /* flashOff@3x.png */; };
-		D50BE3EA1C9FE7A80000A34C /* flashOn@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D50BE3E61C9FE7A80000A34C /* flashOn@3x.png */; };
-		D50BE3EB1C9FE7A80000A34C /* info@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D50BE3E71C9FE7A80000A34C /* info@3x.png */; };
-		D5349DF8201E42D900CD53EA /* cameraRotate@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5349DF7201E42D900CD53EA /* cameraRotate@3x.png */; };
 		D55281BA2016770800FF3CDD /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55281B92016770800FF3CDD /* CameraViewController.swift */; };
 		D55281BC2016782C00FF3CDD /* BarcodeScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55281BB2016782C00FF3CDD /* BarcodeScannerViewController.swift */; };
 		D55281BF20167DB400FF3CDD /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55281BE20167DB400FF3CDD /* UIViewController+Extensions.swift */; };
@@ -30,23 +24,18 @@
 		D5CB3783201944DE00B9319D /* AVMetadataObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5CB3782201944DE00B9319D /* AVMetadataObject+Extensions.swift */; };
 		D5F1C1C91C9C5113001E17A6 /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F1C1C51C9C5113001E17A6 /* Functions.swift */; };
 		D5FC8AD71D252A12004BED88 /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5FC8AD61D252A12004BED88 /* State.swift */; };
+		E7DF89452B619654002335E6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7DF89442B619654002335E6 /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		00B666F4230D390800ABA25C /* FooterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FooterViewController.swift; sourceTree = "<group>"; };
 		00B666FE230D44A900ABA25C /* CameraHeaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraHeaderViewController.swift; sourceTree = "<group>"; };
-		00B6670B230DC61200ABA25C /* barcode@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "barcode@3x.png"; sourceTree = "<group>"; };
-		00B66711230E5BDD00ABA25C /* qrcode@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "qrcode@3x.png"; sourceTree = "<group>"; };
 		0A03879B279A1ED2009AA963 /* AlloyScannerConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlloyScannerConstants.swift; sourceTree = "<group>"; };
 		0A2EEB0127988B270073833E /* BarcodeScannerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarcodeScannerModel.swift; sourceTree = "<group>"; };
 		0A2EEB0327988B720073833E /* CameraControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraControllerProtocol.swift; sourceTree = "<group>"; };
 		0A2EEB0527988C440073833E /* AlloyScannerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlloyScannerViewController.swift; sourceTree = "<group>"; };
 		2DBF9E0D1F169DEF006B5AA8 /* FocusViewType.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = FocusViewType.swift; sourceTree = "<group>"; tabWidth = 2; };
 		D504555E1FD8714700E46826 /* UIView+Extensions.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; tabWidth = 2; };
-		D50BE3E51C9FE7A80000A34C /* flashOff@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flashOff@3x.png"; sourceTree = "<group>"; };
-		D50BE3E61C9FE7A80000A34C /* flashOn@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flashOn@3x.png"; sourceTree = "<group>"; };
-		D50BE3E71C9FE7A80000A34C /* info@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "info@3x.png"; sourceTree = "<group>"; };
-		D5349DF7201E42D900CD53EA /* cameraRotate@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cameraRotate@3x.png"; sourceTree = "<group>"; };
 		D55281B92016770800FF3CDD /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		D55281BB2016782C00FF3CDD /* BarcodeScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeScannerViewController.swift; sourceTree = "<group>"; };
 		D55281BE20167DB400FF3CDD /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
@@ -58,6 +47,7 @@
 		D5CB3782201944DE00B9319D /* AVMetadataObject+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVMetadataObject+Extensions.swift"; sourceTree = "<group>"; };
 		D5F1C1C51C9C5113001E17A6 /* Functions.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; tabWidth = 2; };
 		D5FC8AD61D252A12004BED88 /* State.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; tabWidth = 2; };
+		E7DF89442B619654002335E6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,12 +64,7 @@
 		D50BE3E31C9FE7A80000A34C /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				D5349DF7201E42D900CD53EA /* cameraRotate@3x.png */,
-				D50BE3E51C9FE7A80000A34C /* flashOff@3x.png */,
-				D50BE3E61C9FE7A80000A34C /* flashOn@3x.png */,
-				00B6670B230DC61200ABA25C /* barcode@3x.png */,
-				00B66711230E5BDD00ABA25C /* qrcode@3x.png */,
-				D50BE3E71C9FE7A80000A34C /* info@3x.png */,
+				E7DF89442B619654002335E6 /* Images.xcassets */,
 			);
 			path = Images;
 			sourceTree = "<group>";
@@ -110,7 +95,6 @@
 		D5B2E8951C3A780C00C0327D = {
 			isa = PBXGroup;
 			children = (
-				D50BE3E31C9FE7A80000A34C /* Images */,
 				D5C629691C3A809D007F7B7C /* Sources */,
 				D5C6295C1C3A800E007F7B7C /* BarcodeScanner */,
 				D5B2E8A01C3A780C00C0327D /* Products */,
@@ -136,6 +120,7 @@
 		D5C629691C3A809D007F7B7C /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				D50BE3E31C9FE7A80000A34C /* Images */,
 				D5CB3785201947D000B9319D /* Helpers */,
 				D5CB37842019477900B9319D /* DataStructures */,
 				D55281BD20167D9F00FF3CDD /* Extensions */,
@@ -236,12 +221,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D50BE3E91C9FE7A80000A34C /* flashOff@3x.png in Resources */,
-				D5349DF8201E42D900CD53EA /* cameraRotate@3x.png in Resources */,
-				D50BE3EB1C9FE7A80000A34C /* info@3x.png in Resources */,
-				00B66712230E5BDD00ABA25C /* qrcode@3x.png in Resources */,
-				00B6670C230DC61200ABA25C /* barcode@3x.png in Resources */,
-				D50BE3EA1C9FE7A80000A34C /* flashOn@3x.png in Resources */,
+				E7DF89452B619654002335E6 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
