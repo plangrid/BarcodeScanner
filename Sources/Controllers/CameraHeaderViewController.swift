@@ -27,7 +27,7 @@ public final class CameraHeaderViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
-        titleLabel = makeLabel(text: "Scanner")
+        titleLabel = makeLabel(text: localizedString("SCAN_TITLE"))
         barcodeLabel = makeLabel(text: localizedString("SCAN_BARCODE_SUBTITLE"))
         qrLabel = makeLabel(text: localizedString("SCAN_QRCODE_SUBTITLE"))
         barcodeImageView = makeImageView(imageName: "barcode")
